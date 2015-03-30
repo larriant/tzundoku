@@ -1,0 +1,21 @@
+{% extends "layout.html" %}
+{% block title %}Login{% endblock %}
+{% block content %}
+
+<div class="doku_list">
+<h2 class="form-register-heading">List of Dokus Already Created</h2>
+</div>
+
+<form class="form-register" role="form" method="post" action="" autocomplete="off">
+<h2 class="form-register-heading">Add a New Doku</h2>
+
+<input class="form-control" type ="text" name="doku_name" id="doku_Name" placeholder="Doku Name">
+
+<select class="form-control" name="doku_parent" id="doku_parent">
+	<option value="Top">Top</option>
+</select>
+
+<input class="btn btn-lg btn-primary btn-block" type="submit" name="submit-add-doku" value="Add the Doku">
+</form>
+
+{% endblock %}
