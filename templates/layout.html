@@ -28,7 +28,7 @@
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
               </button>
-              <a class="navbar-brand" href="./index.php">TzunDoku</a>
+              <a class="navbar-brand" href="{{ url_for('index') }}">TzunDoku</a>
             </div>
             <div id="navbar" class="navbar-collapse collapse">
               <ul class="nav navbar-nav">
@@ -37,9 +37,9 @@
                	<li class="dropdown">
                   <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Account<span class="caret"></span></a>
                   <ul class="dropdown-menu" role="menu">
-                    <li><a href="./login.php">Login</a></li>
-                    <li><a href="./register.php">Register</a></li>
-		    <li><a href="./logout.php">Logout</a></li>
+                    <li><a href="{{ url_for('login') }}">Login</a></li>
+                    <li><a href="{{ url_for('register') }}">Register</a></li>
+		    <li><a href="{{ url_for('logout') }}">Logout</a></li>
                   </ul>
                 </li>
               </ul>
@@ -58,8 +58,7 @@
     <!-- Bootstrap core JavaScript
     ================================================== -->
     <!-- Placed at the end of the document so the pages load faster -->
-    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
-	<script>window.jQuery || document.write('<script src="{{url_for('static', filename='jquery.js') }}">\x3C/script>')</script>
+    <script type=text/javascript src="{{url_for('static', filename='jquery.js') }}"></script>
     <script src="{{ url_for('static', filename='bootstrap.min.js') }}"></script>
   </body>
 </html>
