@@ -1,6 +1,6 @@
 from flask import render_template, request, redirect, url_for, flash, session
 from flask.ext.login import login_user, logout_user, current_user, login_required
-from tzundoku import tzundoku, db, lm
+from tzundoku import tzundoku, db
 from .forms import LoginForm
 from .forms import RegistrationForm
 from .models import User
@@ -13,25 +13,65 @@ def index():
 @tzundoku.route("/login", methods=['GET', 'POST'])
 def login(): 
     form = LoginForm() 
-    if form.validate_on_submit():
-        login_user(user)
-        flash('Logged in successfully')
-        return redirect('/overview')
-    return render_template('login.html', title='Login', form=form)
+    if 'email' in session:
+        return redirect(url_for('profile'))
+    
+    if request.method == 'POST':
+        if form.validate() == False:
+            return render_template('login.html', form=form)
+        else:
+            user = User.query.filter_by(username = form.username.data).first()
+            session['email'] = user.email 
+            return redirect(url_for('overview'))
+    elif request.method == 'GET':
+        return render_template('login.html', title='Login', form=form)
 
-@tzundoku.route("/register")
+@tzundoku.route("/register", methods=['GET', 'POST'])
 def register():
     form = RegistrationForm()
-    return render_template('register.html', form=form)
+    if 'email' in session:
+        return redirect(url_for('profile'))
+    
+    if request.method == 'POST':
+        if form.validate() == False:
+            return render_template('register.html', form=form)
+        else:
+            newuser = User(form.username.data, form.email.data, form.password.data)
+            db.session.add(newuser)
+            db.session.commit()
+            session['email'] = newuser.email
+            flash('You have created a new account')
+            return redirect(url_for('overview')) 
+
+    elif request.method == 'GET':
+        return render_template('register.html', form=form)  
 
 @tzundoku.route("/logout")
 def logout():
-    return render_template('logout.html')
+    if 'email' not in session:
+        return redirect(url_for('login'))
+    session.pop('email', None)
+    return redirect(url_for('index')) 
 
 @tzundoku.route("/overview")
 def overview():
     return render_template('overview.html')
 
-@lm.user_loader
-def load_user(id):
-    return User.query.get(int(id))
+@tzundoku.route('/profile')
+def profile():
+    if 'email' not in session:
+        return redirect(url_for('login'))
+
+    user = User.query.filter_by(email= session['email']).first()
+    
+    if user is None:
+        return redirect(url_for('login'))
+    else:
+        return render_template('profile.html')
+
+@tzundoku.route('/testdb')
+def testdb():
+    if db.session.query("1").from_statement("SELECT 1").all():
+        return 'It Works.'
+    else:
+        return 'Something is broken'

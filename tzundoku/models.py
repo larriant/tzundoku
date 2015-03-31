@@ -2,6 +2,7 @@ from tzundoku import db
 from werkzeug import generate_password_hash, check_password_hash
 
 class User(db.Model):
+    __tablename__ = 'users'
     id = db.Column(db.Integer, primary_key = True)
     username = db.Column(db.String(64), index = True, unique=True)
     email = db.Column(db.String(64), index = True, unique=True)
@@ -11,7 +12,6 @@ class User(db.Model):
         self.username = username
         self.email = email.lower()
         self.set_password(password)
-
 
     def set_password(self, password):
         self.pwdhash = generate_password_hash(password)
@@ -42,6 +42,8 @@ class Doku(db.Model):
     id = db.Column(db.Integer, primary_key = True)
     title = db.Column(db.String(30), index = True, unique= True)
     parent = db.Column(db.String(30), index = True, default="Top")
+    created_by_id = db.Column(db.integer(), index = True, default="2")
+    created_date =  db.Column(db.integer(), index = True, default="2015")  
 
     def __repr__(self):
         return '<Doku %r>' % (self.title)
