@@ -1,0 +1,24 @@
+{% extends "layout.html" %}
+{% block title %}Login{% endblock %}
+{% block content %}
+
+<form class="form-signin" role="form" method="post" action="" autocomplete="off">
+
+    {{ form.hidden_tag() }}
+	<h2 class="form-signin-heading">Please Login</h2>
+
+	<p>Not yet a member? <a href='{{ url_for('register') }}'>Register</a></p>
+
+    {{ form.username(class_='form-control', placeholder="Username") }}
+    {{ form.password(class_='form-control', placeholder="Password") }}
+
+    <a href='reset.php'>Forgot your Password?</a>
+
+    <input type="submit" class="btn btn-lg btn-primary btn-block" name="submit" value="Login">
+    {% for error in form.errors.items() %}
+    {{ error }}
+    {% endfor %}
+
+</form>
+
+{% endblock %}

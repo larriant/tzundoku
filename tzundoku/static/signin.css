@@ -1,0 +1,174 @@
+/* Sign - In
+------------------------- */
+
+.form-signin {
+  max-width: 330px;
+  padding: 15px;
+  margin: 30px auto;
+}
+.form-signin .form-signin-heading,
+.form-signin .checkbox {
+  margin-bottom: 10px;
+}
+.form-signin .checkbox {
+  font-weight: normal;
+}
+.form-signin .form-control {
+  position: relative;
+  height: auto;
+  -webkit-box-sizing: border-box;
+     -moz-box-sizing: border-box;
+          box-sizing: border-box;
+  padding: 10px;
+  font-size: 16px;
+}
+.form-signin .form-control:focus {
+  z-index: 2;
+}
+.form-signin input[name="username"] {
+  margin-bottom: -1px;
+  border-bottom-right-radius: 0;
+  border-bottom-left-radius: 0;
+}
+
+.form-signin input[name="password"] {
+  margin-bottom: 10px;
+  border-top-right-radius: 0;
+  border-top-left-radius: 0;
+}
+
+
+/* Register
+------------------------- */
+
+.form-register {
+  max-width: 330px;
+  padding: 15px;
+  margin: 30px auto;
+}
+.form-register .form-register-heading,
+.form-register .checkbox {
+  margin-bottom: 10px;
+}
+.form-register .checkbox {
+  font-weight: normal;
+}
+.form-register .form-control {
+  position: relative;
+  height: auto;
+  -webkit-box-sizing: border-box;
+     -moz-box-sizing: border-box;
+          box-sizing: border-box;
+  padding: 10px;
+  font-size: 16px;
+}
+.form-register .form-control:focus {
+  z-index: 2;
+}
+.form-register input[name="username"] {
+  margin-bottom: -1px;
+  border-bottom-right-radius: 0;
+  border-bottom-left-radius: 0;
+}
+
+.form-register input[name="email"] {
+  margin-bottom: 15px;
+  border-top-left-radius: 0;
+  border-top-right-radius: 0;
+}
+
+.form-register input[name="password"] {
+  margin-bottom: -1px;
+  border-bottom-right-radius: 0;
+  border-bottom-left-radius: 0;
+}
+
+.form-register input[name="passwordConfirm"] {
+  margin-bottom: 10px;
+  border-top-left-radius: 0;
+  border-top-right-radius: 0;
+}
+
+
+/* Add to the doku
+------------------------- */
+
+.form-doku-add {
+  max-width: 330px;
+  padding: 15px;
+  margin: 50px auto;
+}
+.form-doku-add .form-register-heading,
+.form-doku-add .checkbox {
+  margin-bottom: 10px;
+}
+.form-doku-add .checkbox {
+  font-weight: normal;
+}
+.form-doku-add .form-control {
+  position: relative;
+  height: auto;
+  -webkit-box-sizing: border-box;
+     -moz-box-sizing: border-box;
+          box-sizing: border-box;
+  padding: 10px;
+  font-size: 16px;
+}
+.form-doku-add .form-control:focus {
+  z-index: 2;
+}
+.form-doku-add input[name="username"] {
+  margin-bottom: -1px;
+  border-bottom-right-radius: 0;
+  border-bottom-left-radius: 0;
+}
+
+.form-doku-add input[name="email"] {
+  margin-bottom: 15px;
+  border-top-left-radius: 0;
+  border-top-right-radius: 0;
+}
+
+.form-form-doku-add input[name="password"] {
+  margin-bottom: -1px;
+  border-bottom-right-radius: 0;
+  border-bottom-left-radius: 0;
+}
+
+.form-form-doku-add input[name="passwordConfirm"] {
+  margin-bottom: 10px;
+  border-top-left-radius: 0;
+  border-top-right-radius: 0;
+}
+
+
+/* Add to the doku
+------------------------- */
+
+.form-item-rate {
+  max-width: 90px;
+  padding: 15px;
+  margin: 50px auto;
+}
+.form-item-rate .form-register-heading,
+.form-item-rate .checkbox {
+  margin-bottom: 10px;
+}
+.form-item-rate .checkbox {
+  font-weight: normal;
+}
+.form-item-rate .form-control {
+  position: relative;
+  height: auto;
+  -webkit-box-sizing: border-box;
+     -moz-box-sizing: border-box;
+          box-sizing: border-box;
+  padding: 10px;
+  margin-bottom:2px;
+  font-size: 16px;
+}
+.form-item-rate .form-control:focus {
+  z-index: 2;
+}
+
+

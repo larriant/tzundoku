@@ -1,0 +1,20 @@
+{% extends "layout.html" %}
+{% block title %}Register{% endblock %}
+{% block content %}
+<form class="form-register" role="form" method="post" action="" autocomplete="off">
+
+    {{ form.hidden_tag() }}
+
+	<h2 class="form-register-heading">Please Register</h2>
+	<p>Already a member? <a href="{{ url_for('login') }}">Login</a></p>
+
+    {{ form.username(class_="form-control", placeholder="Username") }}
+    {{ form.email(class_="form-control", placeholder="Email") }}
+    {{ form.password(class_="form-control", placeholder="Password") }}
+    {{ form.confirm(class_="form-control", placeholder="Confirm Password") }}
+
+   	<input class="btn btn-lg btn-primary btn-block" type="submit" name="submit" value="Register">
+</form>
+
+
+{% endblock %}
