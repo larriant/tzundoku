@@ -42,8 +42,8 @@ class Doku(db.Model):
     id = db.Column(db.Integer, primary_key = True)
     title = db.Column(db.String(30), index = True, unique= True)
     parent = db.Column(db.String(30), index = True, default="Top")
-    created_by_id = db.Column(db.integer(), index = True, default="2")
-    created_date =  db.Column(db.integer(), index = True, default="2015")  
+    created_by_id = db.Column(db.Integer(), index = True, default="2")
+    created_date =  db.Column(db.Integer(), index = True, default="2015")  
 
     def __repr__(self):
         return '<Doku %r>' % (self.title)
