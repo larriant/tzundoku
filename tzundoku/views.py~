@@ -1,8 +1,0 @@
-from tzundoku import tzundoku 
-
-@tzundoku.route('/')
-@tzundoku.route('/index')
-def index():
-    return "Hello, World!"
-
-
