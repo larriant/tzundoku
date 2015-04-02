@@ -39,16 +39,25 @@ class User(db.Model):
 
 
 class Doku(db.Model):
+    __tablename__ = 'dokus'
     id = db.Column(db.Integer, primary_key = True)
     title = db.Column(db.String(30), index = True, unique= True)
     parent = db.Column(db.String(30), index = True, default="Top")
     added_by = db.Column(db.Integer, index = True, default= 1)
     added_date =  db.Column(db.Integer(), index = True, default="2015")  
 
+    def __init__(self):
+        self.id = id
+        self.title = title
+        self.parent = parent
+        self.added_by = added_by
+        self.added_date = added_date
+
     def __repr__(self):
         return '<Doku %r>' % (self.title)
 
 class Item(db.Model):
+    __tablename__ = 'items'
     id = db.Column(db.Integer, primary_key = True)
     type = db.Column(db.String(30), index = True)
     title = db.Column(db.String(50), index = True)
@@ -68,6 +77,7 @@ class Item(db.Model):
 
 
 class Post(db.Model):
+    __tablename__ = 'posts'
     id = db.Column(db.Integer, primary_key = True)
     added_by = db.Column(db.Integer, index = True, default = 1)
     message = db.Column(db.String(500), index = True)

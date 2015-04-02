@@ -38,7 +38,7 @@ def register():
             return render_template('register.html', form=form)
         else:
             user = User(form.username.data, form.email.data, form.password.data)
-            db.session.add(newuser)
+            db.session.add(user)
             db.session.commit()
             session['email'] = user.email
             flash('You have created a new account')
