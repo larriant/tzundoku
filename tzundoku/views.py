@@ -57,9 +57,19 @@ def logout():
 
 @tzundoku.route("/overview")
 def overview():
-    doku = Doku.query.filter_by(title="Music").first()
-    parent = doku['parent']
-    return render_template('overview.html', parent=parent)
+    titles = []
+    doku = Doku.query.all()
+    for a in doku:
+        if a.parent == "Top":
+            titles.append('1)' + a.title)
+            for b in doku:
+                if b.parent == a.title:
+                    titles.append('2)'+ b.title)
+                    for c in doku:
+                        if c.parent == b.title:
+                            titles.append('3)' + c.title)
+                        
+    return render_template('overview.html', titles=titles)
 
 @tzundoku.route('/profile')
 def profile():
