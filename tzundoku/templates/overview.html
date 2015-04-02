@@ -16,8 +16,9 @@
 
 <h2 class="form-register-heading">List of Dokus Already Created</h2>
 
-
-
+{% for a in titles %}
+    <p>{{ a }}</p>
+{% endfor %}
 </div>
 
 <form class="form-register" role="form" method="post" action="" autocomplete="off">

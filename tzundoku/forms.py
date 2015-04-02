@@ -43,9 +43,19 @@ class RegistrationForm(Form):
             return True
 
 
-class adddoku(Form):
+class AddDokuForm(Form):
     title = TextField('title', [validators.required("Please enter a title")])
+    parent = TextField('parent', [validators.required()])
 
+
+    def __init__(self, *args, **kwargs):
+        Form.__init__(self, *args, **kwargs)
+
+
+class AddItemForm(Form):
+    title = TextField('title', [validators.required()])
+    link = TextField('link', [validators.required()])
+    
     def __init__(self, *args, **kwargs):
         Form.__init__(self, *args, **kwargs)
 

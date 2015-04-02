@@ -1,9 +1,8 @@
 from flask import render_template, request, redirect, url_for, flash, session
 from flask.ext.login import login_user, logout_user, current_user, login_required
 from tzundoku import tzundoku, db
-from .forms import LoginForm
-from .forms import RegistrationForm
-from .models import User
+from .forms import LoginForm, RegistrationForm, AddDokuForm, AddItemForm
+from .models import User, Doku, Item, Post
 
 import legal
 
@@ -24,6 +23,7 @@ def login():
         else:
             user = User.query.filter_by(username = form.username.data).first()
             session['email'] = user.email 
+
             return redirect(url_for('overview'))
     elif request.method == 'GET':
         return render_template('login.html', title='Login', form=form)
@@ -38,10 +38,10 @@ def register():
         if form.validate() == False:
             return render_template('register.html', form=form)
         else:
-            newuser = User(form.username.data, form.email.data, form.password.data)
-            db.session.add(newuser)
+            user = User(form.username.data, form.email.data, form.password.data)
+            db.session.add(user)
             db.session.commit()
-            session['email'] = newuser.email
+            session['email'] = user.email
             flash('You have created a new account')
             return redirect(url_for('overview')) 
 
@@ -57,7 +57,19 @@ def logout():
 
 @tzundoku.route("/overview")
 def overview():
-    return render_template('overview.html')
+    titles = []
+    doku = Doku.query.all()
+    for a in doku:
+        if a.parent == "Top":
+            titles.append('1)' + a.title)
+            for b in doku:
+                if b.parent == a.title:
+                    titles.append('2)'+ b.title)
+                    for c in doku:
+                        if c.parent == b.title:
+                            titles.append('3)' + c.title)
+                        
+    return render_template('overview.html', titles=titles)
 
 @tzundoku.route('/profile')
 def profile():
@@ -69,7 +81,8 @@ def profile():
     if user is None:
         return redirect(url_for('login'))
     else:
-        return render_template('profile.html')
+        username = user.username
+        return render_template('profile.html', username=username)
 
 @tzundoku.route('/testdb')
 def testdb():

@@ -141,6 +141,16 @@ body {
 /* RESPONSIVE CSS
 -------------------------------------------------- */
 
+.contentwrapper {
+margin:30px auto;
+width: 500px;
+display:block;
+}
+
+.contentwrapper h1 {
+text-align:center;
+}
+
 footer {
 margin-top:50px;
 position:relative;

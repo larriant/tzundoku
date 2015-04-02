@@ -6,3 +6,10 @@ include
 
 #Mac OS X custom attribute files
 .DS_Store
+
+*.pyc
+*~
+*.swp
+
+/db_repository
+app.db
