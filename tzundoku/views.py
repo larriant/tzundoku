@@ -22,6 +22,7 @@ def login():
         else:
             user = User.query.filter_by(username = form.username.data).first()
             session['email'] = user.email 
+
             return redirect(url_for('overview'))
     elif request.method == 'GET':
         return render_template('login.html', title='Login', form=form)
@@ -36,10 +37,10 @@ def register():
         if form.validate() == False:
             return render_template('register.html', form=form)
         else:
-            newuser = User(form.username.data, form.email.data, form.password.data)
+            user = User(form.username.data, form.email.data, form.password.data)
             db.session.add(newuser)
             db.session.commit()
-            session['email'] = newuser.email
+            session['email'] = user.email
             flash('You have created a new account')
             return redirect(url_for('overview')) 
 
@@ -67,7 +68,8 @@ def profile():
     if user is None:
         return redirect(url_for('login'))
     else:
-        return render_template('profile.html')
+        username = user.username
+        return render_template('profile.html', username=username)
 
 @tzundoku.route('/testdb')
 def testdb():
