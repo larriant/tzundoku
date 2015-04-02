@@ -10,3 +10,6 @@ include
 *.pyc
 *~
 *.swp
+
+/db_repository
+app.db
