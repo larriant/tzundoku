@@ -43,7 +43,7 @@ class RegistrationForm(Form):
             return True
 
 
-class adddoku(Form):
+class AddDokuForm(Form):
     title = TextField('title', [validators.required("Please enter a title")])
     parent = TextField('parent', [validators.required()])
 
@@ -52,7 +52,7 @@ class adddoku(Form):
         Form.__init__(self, *args, **kwargs)
 
 
-class additem(Form):
+class AddItemForm(Form):
     title = TextField('title', [validators.required()])
     link = TextField('link', [validators.required()])
     

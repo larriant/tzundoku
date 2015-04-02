@@ -1,9 +1,8 @@
 from flask import render_template, request, redirect, url_for, flash, session
 from flask.ext.login import login_user, logout_user, current_user, login_required
 from tzundoku import tzundoku, db
-from .forms import LoginForm
-from .forms import RegistrationForm
-from .models import User
+from .forms import LoginForm, RegistrationForm, AddDokuForm, AddItemForm
+from .models import User, Doku, Item, Post
 
 import legal
 
@@ -58,7 +57,9 @@ def logout():
 
 @tzundoku.route("/overview")
 def overview():
-    return render_template('overview.html')
+    doku = Doku.query.filter_by(title="Music").first()
+    parent = doku['parent']
+    return render_template('overview.html', parent=parent)
 
 @tzundoku.route('/profile')
 def profile():
