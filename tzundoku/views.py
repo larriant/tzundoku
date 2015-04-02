@@ -5,6 +5,8 @@ from .forms import LoginForm
 from .forms import RegistrationForm
 from .models import User
 
+import legal
+
 @tzundoku.route('/')
 @tzundoku.route('/index')
 def index():
@@ -77,3 +79,14 @@ def testdb():
         return 'It Works.'
     else:
         return 'Something is broken'
+
+@tzundoku.route('/terms')
+def terms():
+    return render_template('legal.html',
+                           title="Terms and Conditions",
+                           content=legal.terms)
+@tzundoku.route('/privacy')
+def privacy():
+    return render_template('legal.html',
+                           title="Privacy Policy",
+                           content=legal.privacy)
