@@ -154,25 +154,24 @@ def doku():
         return render_template('doku.html', header=header, items=items, form=form)  
 
 
-@tzundoku.route('/item', methods=['GET', 'POST'])
-def item():
+@tzundoku.route('/item/<id>', methods=['GET', 'POST'])
+def item(id):
     user = User.query.filter_by(email= session['email']).first()
     form = AddPostForm()
-    postitemid = request.args['id']
-    item = Item.query.filter_by(id = postitemid).first()
+    item = Item.query.filter_by(id = id).first()
     header = item.title
-    posts = Post.query.filter_by(item_id = postitemid)
+    posts = Post.query.filter_by(item_id = id)
 
 
     if request.method == 'POST':
         if form.validate() == False:
             return render_template('item.html', header=header, posts=posts, form=form)
         else:
-            post = Post(user.id, form.message.data, datetime.datetime.utcnow(), postitemid)
+            post = Post(user.id, form.message.data, datetime.datetime.utcnow(), id)
             db.session.add(post)
             db.session.commit()
             flash('You have added a post!')
-            return redirect(url_for('item', id=postitemid)) 
+            return redirect(url_for('item', id=id)) 
 
     elif request.method == 'GET':
         return render_template('item.html', header=header, posts=posts, form=form)

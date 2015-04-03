@@ -108,6 +108,10 @@ class Post(db.Model):
     def getusername(self):
         user = User.query.filter_by(id = Post.added_by).first()
         return user.username
+    
+    def getitemtitle(self):
+        item = Item.query.filter_by(id = Post.item_id).first()
+        return item.title
  
 
     
