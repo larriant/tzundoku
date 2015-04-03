@@ -54,12 +54,17 @@ body {
 .imgheader-caption > p {
     font-size: 17px;
     line-height: 1.4;
-    margin-bottom:40px;   
+    margin-bottom:40px;
+		color:#fff;
+	  text-shadow: 1.5px 1.5px 0px #000;   
   }
 
 .imgheader-caption > h1 {
     font-size: 35px;
     margin-bottom:10px;
+		color:#fff;
+    text-shadow: 1.5px 1.5px 0px #000;
+   
   }
 
 
