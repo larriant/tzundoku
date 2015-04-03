@@ -1,14 +1,15 @@
 {% extends "layout.html" %}
-{% block title %}Doku{% endblock %}
+{% block title %}{{ header }}{% endblock %}
 {% block content %}
 
 
 <div class="contentwrapper">
     <h1>{{ header }}</h1>
-
+<div class="postlist">
 {% for a in posts %}
-    <div class="dokuitem">{{ a.message }}, {{ a.added_by }} , {{ a.timestamp}} </div>
+    <div class="post"><b><a href="./user/{{ a.added_by }}">{{ a.getusername()|capitalize }}</a>: </b>{{ a.message }}, {{ a.timestamp}} </div>
 {% endfor %}
+</div>
 </br>
 {% with messages = get_flashed_messages() %}
       {% if messages %}
@@ -17,8 +18,6 @@
         {% endfor %}
       {% endif %}
     {% endwith %}
-
-
 
 
 <form class="form-post-add" role="form" method="post" action="" autocomplete="off">

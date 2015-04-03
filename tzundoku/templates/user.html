@@ -1,0 +1,13 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<div class="contentwrapper">
+  <h1>User: {{ user.username|capitalize }}</h1>
+  <hr>
+  {% for post in posts %}
+  <p>
+    {{ user.username|capitalize }} says: <b>{{ post.message}}</b>
+  </p>
+  {% endfor %}
+</div>
+{% endblock %}

@@ -127,6 +127,12 @@
   border-top-right-radius: 0;
 }
 
+.form-doku-add #submit {
+  width:150px;
+  margin:0px auto;
+}
+
+
 
 /* Add an Item 
 ------------------------- */
@@ -178,6 +184,11 @@
   margin-bottom: 15px;
   border-top-left-radius: 0;
   border-top-right-radius: 0;
+}
+
+.form-item-add #submit {
+  width:150px;
+  margin:0px auto;
 }
 
 

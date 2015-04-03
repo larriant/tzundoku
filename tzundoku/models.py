@@ -104,6 +104,10 @@ class Post(db.Model):
         self.message = message
         self.timestamp = timestamp 
         self.item_id = item_id
+
+    def getusername(self):
+        user = User.query.filter_by(id = Post.added_by).first()
+        return user.username
  
 
     

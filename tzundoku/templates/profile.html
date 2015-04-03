@@ -1,7 +1,8 @@
 {% extends "layout.html" %}
+{% block title %}{{ username|capitalize}}{% endblock %}
 {% block content %}
     <div class="contentwrapper">
-        <h2>{{ username }}'s Profile Page</h2>
+        <h2>{{ username|capitalize }}'s Profile Page</h2>
         <h3> Email: {{ session['email'] }} </h3>
     </div>
 {% endblock %}

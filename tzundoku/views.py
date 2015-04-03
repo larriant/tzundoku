@@ -101,6 +101,17 @@ def profile():
         username = user.username
         return render_template('profile.html', username=username)
 
+@tzundoku.route('/user/<id>')
+def user(id):
+    user = User.query.filter_by(id=id).first()
+    if user == None:
+        flash('User %s not found.' % user.username)
+        return redirect(url_for('overview'))
+    posts = Post.query.filter_by(added_by=id)
+    return render_template('user.html',
+                           user=user,
+                           posts=posts)
+
 @tzundoku.route('/testdb')
 def testdb():
     if db.session.query("1").from_statement("SELECT 1").all():
