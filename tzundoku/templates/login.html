@@ -2,10 +2,10 @@
 {% block title %}Login{% endblock %}
 {% block content %}
 
-<form class="form-signin" role="form" method="post" action="" autocomplete="off">
+<form class="form-login" role="form" method="post" action="" autocomplete="off">
 
     {{ form.hidden_tag() }}
-	<h2 class="form-signin-heading">Please Login</h2>
+	<h2 class="form-heading">Please Login</h2>
 
 	<p>Not yet a member? <a href='{{ url_for('register') }}'>Register</a></p>
 

@@ -1,5 +1,5 @@
 from flask.ext.wtf import Form
-from wtforms import TextField, PasswordField, validators, BooleanField, SubmitField, SelectField
+from wtforms import TextField, PasswordField, validators, BooleanField, SubmitField, SelectField, TextAreaField
 from .models import User
 
 class LoginForm(Form):
@@ -64,7 +64,7 @@ class AddItemForm(Form):
         Form.__init__(self, *args, **kwargs)
 
 class AddPostForm(Form):
-    message = TextField('message', [validators.required()])
+    message = TextAreaField('message', [validators.required()])
     submit = SubmitField('Add Post')
     
     

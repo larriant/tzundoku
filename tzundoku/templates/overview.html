@@ -12,14 +12,14 @@
     {% endwith %}
 
 
-<h2 class="form-register-heading">List of Dokus Already Created</h2>
+<h2 class="form-heading">List of Dokus Already Created</h2>
 
 {% for x in titles %}
 		<a href="./doku?id={{ x.id }}">{{ x.title }}</a></br>
 {% endfor %}
 </div>
 
-<form class="form-register" role="form" method="post" action="" autocomplete="off">
+<form class="form-doku-add" role="form" method="post" action="" autocomplete="off">
 {{ form.hidden_tag() }}
 <h2 class="form-register-heading">Add a New Doku</h2>
 

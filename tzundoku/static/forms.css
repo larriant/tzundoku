@@ -1,19 +1,23 @@
-/* Sign - In
-------------------------- */
+/* ALL FORMS */
 
-.form-signin {
-  max-width: 330px;
-  padding: 15px;
-  margin: 30px auto;
-}
-.form-signin .form-signin-heading,
-.form-signin .checkbox {
+.form-heading, .form-checkbox {
   margin-bottom: 10px;
 }
-.form-signin .checkbox {
+
+
+/* Login
+------------------------- */
+
+.form-login{
+  max-width: 330px;
+  padding: 15px;
+  margin: 60px auto;
+}
+
+.form-login .checkbox {
   font-weight: normal;
 }
-.form-signin .form-control {
+.form-login .form-control {
   position: relative;
   height: auto;
   -webkit-box-sizing: border-box;
@@ -22,17 +26,17 @@
   padding: 10px;
   font-size: 16px;
 }
-.form-signin .form-control:focus {
+.form-login .form-control:focus {
   z-index: 2;
 }
-.form-signin input[name="username"] {
+.form-login input[name="username"] {
   margin-bottom: -1px;
   border-bottom-right-radius: 0;
   border-bottom-left-radius: 0;
 }
 
-.form-signin input[name="password"] {
-  margin-bottom: 10px;
+.form-login input[name="password"] {
+  margin-bottom: 15px;
   border-top-right-radius: 0;
   border-top-left-radius: 0;
 }
@@ -44,12 +48,9 @@
 .form-register {
   max-width: 330px;
   padding: 15px;
-  margin: 30px auto;
+  margin: 60px auto;
 }
-.form-register .form-register-heading,
-.form-register .checkbox {
-  margin-bottom: 10px;
-}
+
 .form-register .checkbox {
   font-weight: normal;
 }
@@ -90,7 +91,7 @@
 }
 
 
-/* Add to the doku
+/* Add a doku
 ------------------------- */
 
 .form-doku-add {
@@ -98,10 +99,7 @@
   padding: 15px;
   margin: 50px auto;
 }
-.form-doku-add .form-register-heading,
-.form-doku-add .checkbox {
-  margin-bottom: 10px;
-}
+
 .form-doku-add .checkbox {
   font-weight: normal;
 }
@@ -117,58 +115,105 @@
 .form-doku-add .form-control:focus {
   z-index: 2;
 }
-.form-doku-add input[name="username"] {
+.form-doku-add input[name="title"] {
   margin-bottom: -1px;
   border-bottom-right-radius: 0;
   border-bottom-left-radius: 0;
 }
 
-.form-doku-add input[name="email"] {
+.form-doku-add input[name="parent"] {
   margin-bottom: 15px;
   border-top-left-radius: 0;
   border-top-right-radius: 0;
 }
 
-.form-form-doku-add input[name="password"] {
-  margin-bottom: -1px;
-  border-bottom-right-radius: 0;
-  border-bottom-left-radius: 0;
-}
 
-.form-form-doku-add input[name="passwordConfirm"] {
-  margin-bottom: 10px;
-  border-top-left-radius: 0;
-  border-top-right-radius: 0;
-}
-
-
-/* Add to the doku
+/* Add an Item 
 ------------------------- */
 
-.form-item-rate {
-  max-width: 90px;
+.form-item-add {
+  max-width: 330px;
   padding: 15px;
   margin: 50px auto;
 }
-.form-item-rate .form-register-heading,
-.form-item-rate .checkbox {
-  margin-bottom: 10px;
-}
-.form-item-rate .checkbox {
+
+.form-item-add .checkbox {
   font-weight: normal;
 }
-.form-item-rate .form-control {
+.form-item-add .form-control {
   position: relative;
   height: auto;
   -webkit-box-sizing: border-box;
      -moz-box-sizing: border-box;
           box-sizing: border-box;
   padding: 10px;
-  margin-bottom:2px;
   font-size: 16px;
 }
-.form-item-rate .form-control:focus {
+.form-item-add .form-control:focus {
   z-index: 2;
 }
+.form-item-add input[name="title"] {
+  margin-bottom: -1px;
+  border-bottom-right-radius: 0;
+  border-bottom-left-radius: 0;
+}
+
+.form-item-add input[name="artist"] {
+  margin-bottom: -1px;
+  border-top-left-radius: 0;
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+  border-bottom-left-radius: 0;
+}
+
+.form-item-add input[name="year"] {
+  margin-bottom: -1px;
+  border-top-left-radius: 0;
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+  border-bottom-left-radius: 0;
+}
+
+.form-item-add input[name="link"] {
+  margin-bottom: 15px;
+  border-top-left-radius: 0;
+  border-top-right-radius: 0;
+}
+
+
+/* Add a Post
+------------------------- */
+
+.form-post-add {
+  max-width: 500px;
+  padding: 10px;
+  margin-right:auto;
+  margin-left:auto;
+  margin-top:20px;
+  margin-bottom:50px
+}
+
+.form-post-add .checkbox {
+  font-weight: normal;
+}
+
+.form-post-add .form-control {
+  position: relative;
+  height: 150px;
+  -webkit-box-sizing: border-box;
+     -moz-box-sizing: border-box;
+          box-sizing: border-box;
+  padding: 10px;
+  font-size: 16px;
+}
+.form-post-add .form-control:focus {
+  z-index: 2;
+}
+
+.form-post-add #submit {
+  width:150px;
+  margin:20px auto;
+}
+
 
 
