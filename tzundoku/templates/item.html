@@ -4,7 +4,12 @@
 
 
 <div class="contentwrapper">
-    <h1>Item</h1>
+    <h1>{{ header }}</h1>
+
+{% for a in posts %}
+    <div class="dokuitem">{{ a.message }}, {{ a.added_by }} , {{ a.added_date }} </div>
+{% endfor %}
+</br>
 {% with messages = get_flashed_messages() %}
       {% if messages %}
         {% for message in messages %}
@@ -14,16 +19,13 @@
     {% endwith %}
 
 
-{% for a in posts %}
-    <div class="dokuitem">{{ a.message }}, {{ a.added_by }} , {{ a.added_date }} </div>
-{% endfor %}
 
 
 <form class="form-register" role="form" method="post" action="" autocomplete="off">
 {{ form.hidden_tag() }}
 <h2 class ="form-register-heading">Add Post</h2>
 
-{{ form.message(class_='form-control', placeholder="Title") }}
+{{ form.message(class_='form-control', placeholder="Message") }}
 {{ form.submit(class_='btn btn-lg btn-primary btn-block') }}
  
 {% for post in form.message.errors %}

@@ -123,11 +123,13 @@ def doku():
     user = User.query.filter_by(email= session['email']).first()
     form = AddItemForm()
     itemdokuid = request.args['id']
+    doku = Doku.query.filter_by(id = itemdokuid).first()
+    header = doku.title
     items = Item.query.filter_by(doku_id = itemdokuid)
     
     if request.method == 'POST':
         if form.validate() == False:
-            return render_template('doku.html', items=items, form=form)
+            return render_template('doku.html', header=header, items=items, form=form)
         else:
             item = Item('music', form.title.data, form.artist.data, form.year.data, form.link.data, user.username, 2015, itemdokuid)
             db.session.add(item)
@@ -137,7 +139,7 @@ def doku():
             return redirect(url_for('doku', id=itemdokuid)) 
 
     elif request.method == 'GET':
-        return render_template('doku.html', items=items, form=form)  
+        return render_template('doku.html', header=header, items=items, form=form)  
 
 
 @tzundoku.route('/item', methods=['GET', 'POST'])
@@ -145,20 +147,22 @@ def item():
     user = User.query.filter_by(email= session['email']).first()
     form = AddPostForm()
     postitemid = request.args['id']
+    item = Item.query.filter_by(id = postitemid).first()
+    header = item.title
     posts = Post.query.filter_by(item_id = postitemid)
 
 
     if request.method == 'POST':
         if form.validate() == False:
-            return render_template('item.html', posts=posts, form=form)
+            return render_template('item.html', header=header, posts=posts, form=form)
         else:
             post = Post(user.id, form.message.data, 2015, postitemid)
             db.session.add(post)
             db.session.commit()
             flash('You have added a post!')
-            return redirect(url_for('post', id=postitemid)) 
+            return redirect(url_for('item', id=postitemid)) 
 
     elif request.method == 'GET':
-        return render_template('item.html', posts=posts, form=form)
+        return render_template('item.html', header=header, posts=posts, form=form)
     
 

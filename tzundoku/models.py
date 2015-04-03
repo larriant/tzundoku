@@ -68,9 +68,9 @@ class Item(db.Model):
     link = db.Column(db.String(50), index = True)
     added_by = db.Column(db.Integer, index = True, default= 1)
     added_date = db.Column(db.Integer, index = True)
-    upvotes = db.Column(db.Integer, index = True, default = 0)
-    downvotes =  db.Column(db.Integer, index = True, default = 0)
     doku_id = db.Column(db.Integer, index = True)
+    upvotes = db.Column(db.Integer, index = True, default = 0)
+    downvotes = db.Column(db.Integer, index = True, default = 0)
 
     def __repr__(self):
         return '<Item %r>' % (self.title)
@@ -92,9 +92,9 @@ class Post(db.Model):
     added_by = db.Column(db.Integer, index = True, default = 1)
     message = db.Column(db.String(500), index = True)
     added_date = db.Column(db.Integer, index=True)
+    item_id = db.Column(db.Integer, index=True)
     upvotes = db.Column(db.Integer, index = True, default = 0)
     downvotes =  db.Column(db.Integer, index = True, default = 0)
-    item_id = db.Column(db.Integer, index=True)
 
     def __repr__(self):
         return '<Post %r>' % (self.message) 

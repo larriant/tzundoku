@@ -3,7 +3,7 @@
 {% block content %}
 
 <div class="contentwrapper">
-    <h1>Doku</h1>
+    <h1>{{ header }} Doku</h1>
 {% with messages = get_flashed_messages() %}
       {% if messages %}
         {% for message in messages %}
