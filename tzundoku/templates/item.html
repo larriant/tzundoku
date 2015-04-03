@@ -7,7 +7,7 @@
     <h1>{{ header }}</h1>
 
 {% for a in posts %}
-    <div class="dokuitem">{{ a.message }}, {{ a.added_by }} , {{ a.added_date }} </div>
+    <div class="dokuitem">{{ a.message }}, {{ a.added_by }} , {{ a.timestamp}} </div>
 {% endfor %}
 </br>
 {% with messages = get_flashed_messages() %}

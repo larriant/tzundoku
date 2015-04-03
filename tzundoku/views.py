@@ -4,6 +4,7 @@ from tzundoku import tzundoku, db
 from .forms import LoginForm, RegistrationForm, AddDokuForm, AddItemForm, AddPostForm
 from .models import User, Doku, Item, Post
 
+import datetime
 import legal
 
 @tzundoku.route('/')
@@ -78,7 +79,7 @@ def overview():
         if form.validate() == False:
             return render_template('overview.html', titles=titles, form=form)
         else:
-            doku = Doku(form.title.data, form.parent.data, user.id, 2015)
+            doku = Doku(form.title.data, form.parent.data, user.id, datetime.datetime.utcnow())
             db.session.add(doku)
             db.session.commit()
             flash('You have created a new Doku!')
@@ -131,7 +132,7 @@ def doku():
         if form.validate() == False:
             return render_template('doku.html', header=header, items=items, form=form)
         else:
-            item = Item('music', form.title.data, form.artist.data, form.year.data, form.link.data, user.username, 2015, itemdokuid)
+            item = Item('music', form.title.data, form.artist.data, form.year.data, form.link.data, user.username, datetime.datetime.utcnow(), itemdokuid)
             db.session.add(item)
             db.session.commit()
             session['email'] = user.email
@@ -156,7 +157,7 @@ def item():
         if form.validate() == False:
             return render_template('item.html', header=header, posts=posts, form=form)
         else:
-            post = Post(user.id, form.message.data, 2015, postitemid)
+            post = Post(user.id, form.message.data, datetime.datetime.utcnow(), postitemid)
             db.session.add(post)
             db.session.commit()
             flash('You have added a post!')

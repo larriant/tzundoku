@@ -44,13 +44,13 @@ class Doku(db.Model):
     title = db.Column(db.String(30), index = True, unique= True)
     parent = db.Column(db.String(30), index = True, default="Top")
     added_by = db.Column(db.Integer, index = True, default= 1)
-    added_date =  db.Column(db.Integer(), index = True, default="2015")  
+    timestamp =  db.Column(db.DateTime)
 
-    def __init__(self, title, parent, added_by, added_date):
+    def __init__(self, title, parent, added_by, timestamp):
         self.title = title
         self.parent = parent
         self.added_by = added_by
-        self.added_date = added_date
+        self.timestamp = timestamp 
 
     def __repr__(self):
         return '<Doku %r>' % (self.title)
@@ -67,7 +67,7 @@ class Item(db.Model):
     year = db.Column(db.Integer, index = True)
     link = db.Column(db.String(50), index = True)
     added_by = db.Column(db.Integer, index = True, default= 1)
-    added_date = db.Column(db.Integer, index = True)
+    timestamp = db.Column(db.DateTime)
     doku_id = db.Column(db.Integer, index = True)
     upvotes = db.Column(db.Integer, index = True, default = 0)
     downvotes = db.Column(db.Integer, index = True, default = 0)
@@ -75,14 +75,14 @@ class Item(db.Model):
     def __repr__(self):
         return '<Item %r>' % (self.title)
     
-    def __init__(self, type, title, artist, year, link, added_by, added_date, doku_id):
+    def __init__(self, type, title, artist, year, link, added_by, timestamp, doku_id):
         self.type = type
         self.title= title 
         self.artist = artist
         self.year = year
         self.link = link
         self.added_by = added_by
-        self.added_date = added_date 
+        self.timestamp = timestamp 
         self.doku_id = doku_id
 
 
@@ -91,7 +91,7 @@ class Post(db.Model):
     id = db.Column(db.Integer, primary_key = True)
     added_by = db.Column(db.Integer, index = True, default = 1)
     message = db.Column(db.String(500), index = True)
-    added_date = db.Column(db.Integer, index=True)
+    timestamp = db.Column(db.DateTime)
     item_id = db.Column(db.Integer, index=True)
     upvotes = db.Column(db.Integer, index = True, default = 0)
     downvotes =  db.Column(db.Integer, index = True, default = 0)
@@ -99,10 +99,10 @@ class Post(db.Model):
     def __repr__(self):
         return '<Post %r>' % (self.message) 
 
-    def __init__(self,added_by, message, added_date, item_id):
+    def __init__(self,added_by, message, timestamp, item_id):
         self.added_by = added_by
         self.message = message
-        self.added_date = added_date
+        self.timestamp = timestamp 
         self.item_id = item_id
  
 
