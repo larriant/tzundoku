@@ -4,6 +4,11 @@
 
 <div class="contentwrapper">
     <h1>{{ header }} Doku</h1>
+
+{% for a in items %}
+    <div class="dokuitem"><a href="./item?id={{ a.id }}">{{ a.title }}</a>,{{ a.artist }}, {{ a.year }} </div>
+{% endfor %}
+</br>
 {% with messages = get_flashed_messages() %}
       {% if messages %}
         {% for message in messages %}
@@ -12,10 +17,6 @@
       {% endif %}
     {% endwith %}
 
-
-{% for a in items %}
-    <div class="dokuitem"><a href="./item?id={{ a.id }}">{{ a.title }}</a>,{{ a.artist }}, {{ a.year }} </div>
-{% endfor %}
 
 <form class="form-register" role="form" method="post" action="" autocomplete="off">
 {{ form.hidden_tag() }}
