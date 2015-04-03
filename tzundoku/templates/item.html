@@ -1,0 +1,37 @@
+{% extends "layout.html" %}
+{% block title %}Doku{% endblock %}
+{% block content %}
+
+
+<div class="contentwrapper">
+    <h1>Item</h1>
+{% with messages = get_flashed_messages() %}
+      {% if messages %}
+        {% for message in messages %}
+            {{ message }}
+        {% endfor %}
+      {% endif %}
+    {% endwith %}
+
+
+{% for a in posts %}
+    <div class="dokuitem">{{ a.message }}, {{ a.added_by }} , {{ a.added_date }} </div>
+{% endfor %}
+
+
+<form class="form-register" role="form" method="post" action="" autocomplete="off">
+{{ form.hidden_tag() }}
+<h2 class ="form-register-heading">Add Post</h2>
+
+{{ form.message(class_='form-control', placeholder="Title") }}
+{{ form.submit(class_='btn btn-lg btn-primary btn-block') }}
+ 
+{% for post in form.message.errors %}
+    <div class="flash">{{ post }}</div>
+{% endfor %}
+
+</form>
+</div>
+ 
+
+{% endblock %}

@@ -46,8 +46,7 @@ class Doku(db.Model):
     added_by = db.Column(db.Integer, index = True, default= 1)
     added_date =  db.Column(db.Integer(), index = True, default="2015")  
 
-    def __init__(self):
-        self.id = id
+    def __init__(self, title, parent, added_by, added_date):
         self.title = title
         self.parent = parent
         self.added_by = added_by
@@ -75,6 +74,16 @@ class Item(db.Model):
 
     def __repr__(self):
         return '<Item %r>' % (self.title)
+    
+    def __init__(self, type, title, artist, year, link, added_by, added_date, doku_id):
+        self.type = type
+        self.title= title 
+        self.artist = artist
+        self.year = year
+        self.link = link
+        self.added_by = added_by
+        self.added_date = added_date 
+        self.doku_id = doku_id
 
 
 class Post(db.Model):
@@ -85,7 +94,16 @@ class Post(db.Model):
     added_date = db.Column(db.Integer, index=True)
     upvotes = db.Column(db.Integer, index = True, default = 0)
     downvotes =  db.Column(db.Integer, index = True, default = 0)
-    item_id = db.Column(db.Integer, index=True, default=None)
+    item_id = db.Column(db.Integer, index=True)
+
+    def __repr__(self):
+        return '<Post %r>' % (self.message) 
+
+    def __init__(self,added_by, message, added_date, item_id):
+        self.added_by = added_by
+        self.message = message
+        self.added_date = added_date
+        self.item_id = item_id
  
 
     

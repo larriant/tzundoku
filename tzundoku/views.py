@@ -1,7 +1,7 @@
 from flask import render_template, request, redirect, url_for, flash, session
 from flask.ext.login import login_user, logout_user, current_user, login_required
 from tzundoku import tzundoku, db
-from .forms import LoginForm, RegistrationForm, AddDokuForm, AddItemForm
+from .forms import LoginForm, RegistrationForm, AddDokuForm, AddItemForm, AddPostForm
 from .models import User, Doku, Item, Post
 
 import legal
@@ -55,24 +55,37 @@ def logout():
     session.pop('email', None)
     return redirect(url_for('index')) 
 
-@tzundoku.route("/overview")
+@tzundoku.route("/overview", methods=['GET', 'POST'])
 def overview():
     form = AddDokuForm()
-    x = 0
-    titles = [[],[],[]]
+    user = User.query.filter_by(email= session['email']).first()
+
+    titles = []
     doku = Doku.query.all()
     for a in doku:
         if a.parent == "Top":
-            x = x + 1
-            titles[x - 1].append(a)
+            titles.append(a)
             for b in doku:
                 if b.parent == a.title:
-                    titles[x - 1].append(b)
+                    titles.append(b)
                     for c in doku:
                         if c.parent == b.title:
-                            titles[x - 1].append(c)
-                        
-    return render_template('overview.html', titles=titles, form=form)
+                            titles.append(c)
+
+
+     
+    if request.method == 'POST':
+        if form.validate() == False:
+            return render_template('overview.html', titles=titles, form=form)
+        else:
+            doku = Doku(form.title.data, form.parent.data, user.id, 2015)
+            db.session.add(doku)
+            db.session.commit()
+            flash('You have created a new Doku!')
+            return redirect(url_for('overview')) 
+
+    elif request.method == 'GET':
+        return render_template('overview.html', titles=titles, form=form)  
 
 @tzundoku.route('/profile')
 def profile():
@@ -104,3 +117,48 @@ def privacy():
     return render_template('legal.html',
                            title="Privacy Policy",
                            content=legal.privacy)
+
+@tzundoku.route('/doku', methods=['GET', 'POST'])
+def doku():
+    user = User.query.filter_by(email= session['email']).first()
+    form = AddItemForm()
+    itemdokuid = request.args['id']
+    items = Item.query.filter_by(doku_id = itemdokuid)
+    
+    if request.method == 'POST':
+        if form.validate() == False:
+            return render_template('doku.html', items=items, form=form)
+        else:
+            item = Item('music', form.title.data, form.artist.data, form.year.data, form.link.data, user.username, 2015, itemdokuid)
+            db.session.add(item)
+            db.session.commit()
+            session['email'] = user.email
+            flash('You have added an item')
+            return redirect(url_for('doku', id=itemdokuid)) 
+
+    elif request.method == 'GET':
+        return render_template('doku.html', items=items, form=form)  
+
+
+@tzundoku.route('/item', methods=['GET', 'POST'])
+def item():
+    user = User.query.filter_by(email= session['email']).first()
+    form = AddPostForm()
+    postitemid = request.args['id']
+    posts = Post.query.filter_by(item_id = postitemid)
+
+
+    if request.method == 'POST':
+        if form.validate() == False:
+            return render_template('item.html', posts=posts, form=form)
+        else:
+            post = Post(user.id, form.message.data, 2015, postitemid)
+            db.session.add(post)
+            db.session.commit()
+            flash('You have added a post!')
+            return redirect(url_for('post', id=postitemid)) 
+
+    elif request.method == 'GET':
+        return render_template('item.html', posts=posts, form=form)
+    
+

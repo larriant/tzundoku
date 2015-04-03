@@ -15,9 +15,7 @@
 <h2 class="form-register-heading">List of Dokus Already Created</h2>
 
 {% for x in titles %}
-	{% for y in x %}
-		<a href="./?doku={{ y.id }}">{{ y.title }}</a></br>
-	{% endfor %}	
+		<a href="./doku?id={{ x.id }}">{{ x.title }}</a></br>
 {% endfor %}
 </div>
 

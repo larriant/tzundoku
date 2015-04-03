@@ -1,11 +1,11 @@
 from flask.ext.wtf import Form
-from wtforms import TextField, PasswordField, validators, BooleanField, SubmitField
+from wtforms import TextField, PasswordField, validators, BooleanField, SubmitField, SelectField
 from .models import User
 
 class LoginForm(Form):
     username = TextField('username', [validators.required("Please enter a Username")]) 
     password = PasswordField('password', [validators.required("Please enter a Password")])
-    submit = SubmitField("login")
+    submit = SubmitField("Login")
     
     def __init__(self, *args, **kwargs):
         Form.__init__(self, *args, **kwargs)
@@ -45,23 +45,31 @@ class RegistrationForm(Form):
 
 class AddDokuForm(Form):
     title = TextField('title', [validators.required("Please enter a title")])
-    parent = TextField('parent', [validators.required()])
-    submit = SubmitField("AddDoku")
+    parent = TextField('parent', [validators.required("Please enter the parent")]) 
+    submit = SubmitField('Add Doku')
 
 
     def __init__(self, *args, **kwargs):
         Form.__init__(self, *args, **kwargs)
 
-
 class AddItemForm(Form):
-    type = TextField('type', [validators.required()])
     title = TextField('title', [validators.required()])
     artist = TextField('artist', [validators.required()])
     year = TextField('year', [validators.required()])
     link = TextField('link', [validators.required()])
+    submit = SubmitField('Add Item')
     
     
     def __init__(self, *args, **kwargs):
         Form.__init__(self, *args, **kwargs)
+
+class AddPostForm(Form):
+    message = TextField('message', [validators.required()])
+    submit = SubmitField('Add Post')
+    
+    
+    def __init__(self, *args, **kwargs):
+        Form.__init__(self, *args, **kwargs)
+
 
 
