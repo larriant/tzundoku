@@ -4,26 +4,16 @@
 
     <!-- Carousel
     ================================================== -->
-    <div id="myCarousel" class="carousel slide" data-ride="carousel">
-      <!-- Indicators -->
-        <ol class="carousel-indicators">
-            <li data-target="#myCarousel" data-slide-to="0" class="active"></li>
-        </ol>
-      <div class="carousel-inner" role="listbox">
-        <div class="item active">
-          <img src="{{ url_for('static', filename='./img/schoolofathens.jpg') }}" alt="School Of Athens by Raphael">
-          <div class="container">
-            <div class="carousel-caption">
+    <div class="imgheader">
+          <img src="{{ url_for('static', filename='./img/creationofadam.jpg') }}" alt="Creation of Adam by Micaelangelo">
+            <div class="imgheader-caption">
               <h1>TzunDoku Mission</h1>
               <p>To help you discover the best content in a wide variety of domains. From academia to fiction, films and music.</p>
-</br></br></br></br></br></br>
               <a class="btn btn-lg btn-primary" href="{{ url_for('overview') }}" role="button">Manifesto</a>
               <a class="btn btn-lg btn-primary" href="{{ url_for('login') }}" role="button">Login</a>
               <a class="btn btn-lg btn-primary" href="{{ url_for('register') }}" role="button">Register</a>
-            </div>
-          </div>
-        </div>
-    </div><!-- /.carousel -->
+           </div>
+    </div>
 
 <!-- What is a Doku?-->
 
@@ -87,6 +77,6 @@
           <p><a class="btn btn-default" href="{{ url_for('overview') }}" role="button">View Rise of China &raquo;</a></p>
         </div><!-- /.col-lg-4 -->
       </div><!-- /.row -->
-
    <hr class="featurette-divider">
+</div>
 {% endblock %}

@@ -38,26 +38,39 @@ body {
 -------------------------------------------------- */
 
 /* Carousel base class */
-.carousel {
-  height: 500px;
-  margin-bottom: 60px;
-}
-/* Since positioning the image, we need to help out the caption */
-.carousel-caption {
-  z-index: 10;
+.imgheader {
+  height: 250px;
 }
 
-/* Declare heights because of positioning of img element */
-.carousel .item {
-  height: 500px;
-  background-color: #777;
+.imgheader-caption {
+	margin-bottom: 20px;
+  margin-top:270px;
+	margin-right:auto;
+	margin-left:auto;
+  width:400px;
+  z-index: 5;
 }
-.carousel-inner > .item > img {
+
+.imgheader-caption > p {
+    font-size: 17px;
+    line-height: 1.4;
+    margin-bottom:40px;   
+  }
+
+.imgheader-caption > h1 {
+    font-size: 35px;
+    margin-bottom:10px;
+  }
+
+
+.imgheader > img {
   position: absolute;
   top: 0;
   left: 0;
   min-width: 100%;
   height: 500px;
+  z-index:-1;
+
 }
 
 
@@ -121,11 +134,6 @@ body {
   }
 
   /* Bump up size of carousel content */
-  .carousel-caption p {
-    margin-bottom: 20px;
-    font-size: 21px;
-    line-height: 1.4;
-  }
 
   .featurette-heading {
     font-size: 50px;
@@ -142,7 +150,9 @@ body {
 -------------------------------------------------- */
 
 .contentwrapper {
-margin:30px auto;
+margin-left:auto;
+margin-right:auto;
+margin-top:100px;
 width: 500px;
 display:block;
 }
