@@ -5,32 +5,38 @@
 <div class="doku_list">
 {% with messages = get_flashed_messages() %}
       {% if messages %}
-        <ul>
         {% for message in messages %}
-            <li>{{ message }} </li>
+            {{ message }}
         {% endfor %}
-        </ul>
       {% endif %}
     {% endwith %}
 
 
 <h2 class="form-register-heading">List of Dokus Already Created</h2>
 
-{% for a in titles %}
-    <p>{{ a }}</p>
+{% for x in titles %}
+	{% for y in x %}
+		<a href="./?doku={{ y.id }}">{{ y.title }}</a></br>
+	{% endfor %}	
 {% endfor %}
 </div>
 
 <form class="form-register" role="form" method="post" action="" autocomplete="off">
+{{ form.hidden_tag() }}
 <h2 class="form-register-heading">Add a New Doku</h2>
 
-<input class="form-control" type ="text" name="doku_name" id="doku_Name" placeholder="Doku Name">
+{{ form.title(class_='form-control', placeholder="Doku Name" ) }}
+{{ form.parent(class_='form-control', placeholder="Doku Parent") }}
+{{ form.submit(class_='btn btn-lg btn-primary btn-block') }}
 
-<select class="form-control" name="doku_parent" id="doku_parent">
-	<option value="Top">Top</option>
-</select>
 
-<input class="btn btn-lg btn-primary btn-block" type="submit" name="submit-add-doku" value="Add the Doku">
+{% for message in form.title.errors %}
+    <div class="flash">{{ message }}</div>
+{% endfor %}
+   
+{% for message in form.parent.errors %}
+    <div class="flash">{{ message }}</div>
+{% endfor %}
 </form>
 
 {% endblock %}

@@ -1,0 +1,44 @@
+{% extends "layout.html" %}
+{% block title %}Doku{% endblock %}
+{% block content %}
+
+<div class="contentwrapper">
+    <h1>Doku</h1>
+{% for a in items %}
+    <div class="dokuitem">{{ a.title }}, {{ a.artist }}, {{ a.year }}, {{ a.id }}</div>
+{% endfor %}
+
+<form class="form-register" role="form" method="post" action="" autocomplete="off">
+{{ form.hidden_tag() }}
+<h2 class ="form-register-heading">Add an Item</h2>
+
+{{ form.type(class_='form-control', placeholder="Type") }}
+{{ form.title(class_='form-control', placeholder="Title") }}
+{{ form.artist(class_='form-control', placeholder="Artist") }}
+{{ form.year(class_='form-control', placeholder="Year") }}
+{{ form.link(class_='form-control', placeholder="Link") }}
+
+</div>
+
+{% for message in form.type.errors %}
+    <div class="flash">{{ message }}</div>
+{% endfor %}
+   
+{% for message in form.title.errors %}
+    <div class="flash">{{ message }}</div>
+{% endfor %}
+
+{% for message in form.artist.errors %}
+    <div class="flash">{{ message }}</div>
+{% endfor %}
+
+{% for message in form.year.errors %}
+    <div class="flash">{{ message }}</div>
+{% endfor %}
+
+{% for message in form.link.errors %}
+    <div class="flash">{{ message }}</div>
+{% endfor %}
+
+
+{% endblock %}

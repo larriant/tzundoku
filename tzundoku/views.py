@@ -57,19 +57,22 @@ def logout():
 
 @tzundoku.route("/overview")
 def overview():
-    titles = []
+    form = AddDokuForm()
+    x = 0
+    titles = [[],[],[]]
     doku = Doku.query.all()
     for a in doku:
         if a.parent == "Top":
-            titles.append('1)' + a.title)
+            x = x + 1
+            titles[x - 1].append(a)
             for b in doku:
                 if b.parent == a.title:
-                    titles.append('2)'+ b.title)
+                    titles[x - 1].append(b)
                     for c in doku:
                         if c.parent == b.title:
-                            titles.append('3)' + c.title)
+                            titles[x - 1].append(c)
                         
-    return render_template('overview.html', titles=titles)
+    return render_template('overview.html', titles=titles, form=form)
 
 @tzundoku.route('/profile')
 def profile():

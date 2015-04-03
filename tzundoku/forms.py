@@ -46,6 +46,7 @@ class RegistrationForm(Form):
 class AddDokuForm(Form):
     title = TextField('title', [validators.required("Please enter a title")])
     parent = TextField('parent', [validators.required()])
+    submit = SubmitField("AddDoku")
 
 
     def __init__(self, *args, **kwargs):
@@ -53,8 +54,12 @@ class AddDokuForm(Form):
 
 
 class AddItemForm(Form):
+    type = TextField('type', [validators.required()])
     title = TextField('title', [validators.required()])
+    artist = TextField('artist', [validators.required()])
+    year = TextField('year', [validators.required()])
     link = TextField('link', [validators.required()])
+    
     
     def __init__(self, *args, **kwargs):
         Form.__init__(self, *args, **kwargs)

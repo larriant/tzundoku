@@ -65,6 +65,7 @@ class Item(db.Model):
     composer = db.Column(db.String(50), index = True)
     creator = db.Column(db.String(50), index = True)
     artist = db.Column(db.String(50), index = True)
+    year = db.Column(db.Integer, index = True)
     link = db.Column(db.String(50), index = True)
     added_by = db.Column(db.Integer, index = True, default= 1)
     added_date = db.Column(db.Integer, index = True)
@@ -84,7 +85,6 @@ class Post(db.Model):
     added_date = db.Column(db.Integer, index=True)
     upvotes = db.Column(db.Integer, index = True, default = 0)
     downvotes =  db.Column(db.Integer, index = True, default = 0)
-    doku_id = db.Column(db.Integer, index=True, default=None)
     item_id = db.Column(db.Integer, index=True, default=None)
  
 
