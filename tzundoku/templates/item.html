@@ -7,7 +7,12 @@
     <h1>{{ header }}</h1>
 <div class="postlist">
 {% for a in posts %}
-    <div class="post"><b><a href="/user/{{ a.added_by }}">{{ a.getusername()|capitalize }}</a>: </b>{{ a.message }}, {{ a.timestamp}} </div>
+    <div class="post">
+    <b><a href="/user/{{ a.added_by }}">{{ a.getusername()|capitalize }}</a>: </b>{{ a.message }}, {{ a.timestamp}}
+    {% if current_user.is_authenticated() and current_user.is_admin() %}
+    <a href="/removepost/{{ a.id }}">(Delete)</a> 
+    {% endif %}
+    </div>
 {% endfor %}
 </div>
 </br>

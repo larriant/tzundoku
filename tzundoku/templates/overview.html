@@ -13,8 +13,13 @@
 
 
 <h2 class="form-heading">List of Dokus Already Created</h2>
+
 {% for x in titles %}
-		<a href="./doku?id={{ x.id }}">{{ x.title }}</a></br>
+    <p><a href="./doku?id={{ x.id }}">{{ x.title }}</a>
+    {% if current_user.is_authenticated() and current_user.is_admin() %}
+    <a href="/removedoku/{{ x.id }}">(Delete)</a> 
+    {% endif %}
+    </p>
 {% endfor %}
 
 {% if current_user.is_authenticated() == False %}

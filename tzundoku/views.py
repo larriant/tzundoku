@@ -178,3 +178,27 @@ def makemoderator(id):
     user.make_moderator() 
     flash('You have made this user a moderator')
     return redirect('overview')
+
+@tzundoku.route('/removedoku/<id>')
+@login_required
+def removedoku(id):
+    doku = Doku.query.filter_by(id=id).first()
+    doku.removedoku()
+    flash('You have removed this doku')
+    return redirect('overview')
+
+@tzundoku.route('/removeitem/<id>')
+@login_required
+def removeitem(id):
+    item = Item.query.filter_by(id=id).first()
+    item.removeitem()
+    flash('You have removed this item')
+    return redirect('/overview')
+
+@tzundoku.route('/removepost/<id>')
+@login_required
+def removepost(id):
+    post = Post.query.filter_by(id=id).first()
+    post.removepost()
+    flash('You have removed this post')
+    return redirect('/overview')    

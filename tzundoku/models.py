@@ -78,9 +78,10 @@ class Doku(db.Model):
         return '<Doku %r>' % (self.title)
 
     def removedoku(self):
-        doku = Doku.query.filter_by(id = Doku.id).first()
+        doku = Doku.query.filter_by(id = self.id).first()
+        db.session.delete(doku)
+        db.session.commit()
         
-
 class Item(db.Model):
     __tablename__ = 'items'
     id = db.Column(db.Integer, primary_key = True)
@@ -117,6 +118,11 @@ class Item(db.Model):
         db.session.commit()
         #figure out how to insert data to Item, then just call this
 
+    def removeitem(self):
+        item = Item.query.filter_by(id = self.id).first()
+        db.session.delete(item)
+        db.session.commit()
+
 
 class Post(db.Model):
     __tablename__ = 'posts'
@@ -138,12 +144,15 @@ class Post(db.Model):
         self.item_id = item_id
 
     def getusername(self):
-        user = User.query.filter_by(id = Post.added_by).first()
+        user = User.query.filter_by(id = self.added_by).first()
         return user.username
     
     def getitemtitle(self):
-        item = Item.query.filter_by(id = Post.item_id).first()
+        item = Item.query.filter_by(id = self.item_id).first()
         return item.title
- 
 
-    
+    def removepost(self):
+        post = Post.query.filter_by(id = self.id).first()
+        db.session.delete(post)
+        db.session.commit()
+ 
