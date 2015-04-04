@@ -1,11 +1,15 @@
 from flask import render_template, request, redirect, url_for, flash, session
 from flask.ext.login import login_user, logout_user, current_user, login_required
-from tzundoku import tzundoku, db
-from .forms import LoginForm, RegistrationForm, AddDokuForm, AddItemForm, AddPostForm
+from tzundoku import tzundoku, db, lm
+from .forms import LoginForm, RegistrationForm, AddDokuForm, AddItemForm, AddPostForm, UpvoteForm, DownvoteForm
 from .models import User, Doku, Item, Post
 
 import datetime
 import legal
+
+@lm.user_loader
+def load_user(id):
+    return User.query.get(id)
 
 @tzundoku.route('/')
 @tzundoku.route('/index')
@@ -14,27 +18,24 @@ def index():
 
 @tzundoku.route("/login", methods=['GET', 'POST'])
 def login(): 
-    form = LoginForm() 
-    if 'email' in session:
-        return redirect(url_for('profile'))
-    
-    if request.method == 'POST':
-        if form.validate() == False:
-            return render_template('login.html', form=form)
-        else:
-            user = User.query.filter_by(username = form.username.data).first()
-            session['email'] = user.email 
+    if current_user is not None and current_user.is_authenticated():
+        return redirect(url_for('overview'))
 
-            return redirect(url_for('overview'))
-    elif request.method == 'GET':
-        return render_template('login.html', title='Login', form=form)
+    form = LoginForm() 
+    if form.validate_on_submit():
+        user = User.query.filter_by(username=form.username.data).first()
+        login_user(user)
+        flash("Logged in successfully")
+        return redirect(url_for('overview'))
+    return render_template('login.html', title='Login', form=form)
+
 
 @tzundoku.route("/register", methods=['GET', 'POST'])
 def register():
+    if current_user is not None and current_user.is_authenticated():
+        return redirect(url_for('overview'))
     form = RegistrationForm()
-    if 'email' in session:
-        return redirect(url_for('profile'))
-    
+
     if request.method == 'POST':
         if form.validate() == False:
             return render_template('register.html', form=form)
@@ -42,7 +43,7 @@ def register():
             user = User(form.username.data, form.email.data, form.password.data)
             db.session.add(user)
             db.session.commit()
-            session['email'] = user.email
+            login_user(user)
             flash('You have created a new account')
             return redirect(url_for('overview')) 
 
@@ -50,10 +51,9 @@ def register():
         return render_template('register.html', form=form)  
 
 @tzundoku.route("/logout")
+@login_required
 def logout():
-    if 'email' not in session:
-        return redirect(url_for('login'))
-    session.pop('email', None)
+    logout_user() 
     return redirect(url_for('index')) 
 
 @tzundoku.route("/overview", methods=['GET', 'POST'])
@@ -89,17 +89,11 @@ def overview():
         return render_template('overview.html', titles=titles, form=form)  
 
 @tzundoku.route('/profile')
+@login_required
 def profile():
-    if 'email' not in session:
-        return redirect(url_for('login'))
-
-    user = User.query.filter_by(email= session['email']).first()
-    
-    if user is None:
-        return redirect(url_for('login'))
-    else:
-        username = user.username
-        return render_template('profile.html', username=username)
+    user = User.query.filter_by(email= session['email']).first()  
+    username = user.username
+    return render_template('profile.html', username=username)
 
 @tzundoku.route('/user/<id>')
 def user(id):
@@ -133,6 +127,8 @@ def privacy():
 @tzundoku.route('/doku', methods=['GET', 'POST'])
 def doku():
     user = User.query.filter_by(email= session['email']).first()
+    upvoteform = UpvoteForm()
+    downvoteform = DownvoteForm()
     form = AddItemForm()
     itemdokuid = request.args['id']
     doku = Doku.query.filter_by(id = itemdokuid).first()
@@ -141,7 +137,7 @@ def doku():
     
     if request.method == 'POST':
         if form.validate() == False:
-            return render_template('doku.html', header=header, items=items, form=form)
+            return render_template('doku.html', header=header, items=items, form=form, upvoteform = upvoteform, downvoteform=downvoteform)
         else:
             item = Item('music', form.title.data, form.artist.data, form.year.data, form.link.data, user.username, datetime.datetime.utcnow(), itemdokuid)
             db.session.add(item)
@@ -151,7 +147,7 @@ def doku():
             return redirect(url_for('doku', id=itemdokuid)) 
 
     elif request.method == 'GET':
-        return render_template('doku.html', header=header, items=items, form=form)  
+        return render_template('doku.html', header=header, items=items, form=form, upvoteform=upvoteform, downvoteform=downvoteform)
 
 
 @tzundoku.route('/item/<id>', methods=['GET', 'POST'])

@@ -71,5 +71,17 @@ class AddPostForm(Form):
     def __init__(self, *args, **kwargs):
         Form.__init__(self, *args, **kwargs)
 
+class UpvoteForm(Form):
+    submit = SubmitField('Up')
+ 
+    def __init__(self, *args, **kwargs):
+        Form.__init__(self, *args, **kwargs)
+
+class DownvoteForm(Form):
+    submit = SubmitField('Do')
+ 
+    def __init__(self, *args, **kwargs):
+        Form.__init__(self, *args, **kwargs)
+
 
 

@@ -20,6 +20,15 @@
     {% endwith %}
 
 
+{% if current_user.is_authenticated() == False %}
+<div class="notlogged">
+<p><a href="./login">Login</a> or <a href="./register">Register</a> to post to this Item!</p>
+</div>
+{% endif %}
+
+
+{% if current_user.is_authenticated() %}
+
 <form class="form-post-add" role="form" method="post" action="" autocomplete="off">
 {{ form.hidden_tag() }}
 <h2 class ="form-heading">Add Post</h2>
@@ -32,6 +41,7 @@
 {% endfor %}
 
 </form>
+{% endif %}
 </div>
  
 

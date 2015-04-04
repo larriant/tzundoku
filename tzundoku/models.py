@@ -19,6 +19,7 @@ class User(db.Model):
     def check_password(self, password):
         return check_password_hash(self.pwdhash, password)
 
+
     def is_authenticated(self):
         return True
 
@@ -26,18 +27,14 @@ class User(db.Model):
         return True
 
     def is_anonymous(self):
-        return False
+        return True
 
     def get_id(self):
         try:
-            return unicode(self.id)  # python 2
+            return unicode(self.id)
         except NameError:
-            return str(self.id)  # python 3 
-
-    def __repr__(self):
-        return '<User %r>' % (self.username)
-
-
+            return str(self.id)
+    
 class Doku(db.Model):
     __tablename__ = 'dokus'
     id = db.Column(db.Integer, primary_key = True)
@@ -84,6 +81,12 @@ class Item(db.Model):
         self.added_by = added_by
         self.timestamp = timestamp 
         self.doku_id = doku_id
+
+    def upvote(self):
+        item = Item.query.filter_by(id = self.id).first()
+        item.upvotes += 1
+        db.session.commit()
+        #figure out how to insert data to Item, then just call this
 
 
 class Post(db.Model):

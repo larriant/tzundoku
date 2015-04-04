@@ -226,5 +226,31 @@
   margin:20px auto;
 }
 
+.form-upvote {
+  width:20px;
+  margin:0px;
+  display:block;
+}
 
+.form-downvote {
+  width:20px;
+  margin:0px;
+  display:block;
+}
+
+.form-upvote #submit {
+  width:20px;
+  height:20px;
+  font-size:10px;
+  padding:0px;
+  margin:0px;
+}
+
+.form-downvote #submit {
+  width:20px;
+  height:20px;
+  font-size:10px;
+  padding:0px;
+  margin:0px;
+}
 

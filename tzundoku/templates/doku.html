@@ -6,7 +6,8 @@
     <h1>{{ header }} Doku</h1>
 
 {% for a in items %}
-    <div class="dokuitem"><a href="./item/{{ a.id }}">{{ a.title }}</a>,{{ a.artist }}, {{ a.year }}, {{ a.upvotes }}, {{ a.downvotes }}, {{ a.timestamp }} </div>
+    <div class="dokuitem"><a href="./item/{{ a.id }}">{{ a.title }}</a>,{{ a.artist }}, {{ a.year }}, {{ a.upvotes }}, {{ a.downvotes }}
+</div>
 {% endfor %}
 </br>
 {% with messages = get_flashed_messages() %}
@@ -18,6 +19,13 @@
     {% endwith %}
 
 
+{% if current_user.is_authenticated() == False %}
+<div class="notlogged">
+<p><a href="./login">Login</a> or <a href="./register">Register</a> to add items to this Doku!</p>
+</div>
+{% endif %}
+
+{% if current_user.is_authenticated() %}
 <form class="form-item-add" role="form" method="post" action="" autocomplete="off">
 {{ form.hidden_tag() }}
 <h2 class ="form-heading">Add an Item</h2>
@@ -46,5 +54,5 @@
     <div class="flash">{{ message }}</div>
 {% endfor %}
 </form>
-
+{% endif %}
 {% endblock %}
