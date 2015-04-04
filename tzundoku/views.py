@@ -99,7 +99,7 @@ def profile():
 def user(id):
     user = User.query.filter_by(id=id).first()
     if user == None:
-        flash('User %s not found.' % user.username)
+        flash('User not found.')
         return redirect(url_for('overview'))
     posts = Post.query.filter_by(added_by=id)
     return render_template('user.html',
@@ -172,4 +172,9 @@ def item(id):
     elif request.method == 'GET':
         return render_template('item.html', header=header, posts=posts, form=form)
     
-
+@tzundoku.route('/makemoderator/<id>')
+def makemoderator(id):
+    user = User.query.filter_by(id=id).first()
+    user.make_moderator() 
+    flash('You have made this user a moderator')
+    return redirect('overview')

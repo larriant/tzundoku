@@ -9,5 +9,29 @@
     {{ user.username|capitalize }} says: <b>{{ post.message }}</b> on <a href="/item/{{ post.item_id }}">{{ post.getitemtitle() }}</a>
   </p>
   {% endfor %}
+  <hr>
+{% if current_user.is_authenticated() %}
+{% if current_user.is_admin() %}
+<p>
+{% if user.is_admin() == False %}
+(<a href="/makeadmin/{{ user.id }}">Make Admin</a>)
+{% endif %}
+
+{% if user.is_moderator() == False %}
+(<a href="/makemoderator/{{ user.id }}">Make Moderator</a>)
+{% endif %}
+</p>
+{% endif %}
+{% endif %}
+
+{% if user.is_admin() %}
+<p>{{ user.username|capitalize }} is an Admin</p>
+{% endif %}
+
+{% if user.is_moderator() %}
+<p>{{ user.username|capitalize }} is a Moderator</p>
+{% endif %}
+
 </div>
+
 {% endblock %}

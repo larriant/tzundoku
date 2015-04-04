@@ -7,6 +7,8 @@ class User(db.Model):
     username = db.Column(db.String(64), index = True, unique=True)
     email = db.Column(db.String(64), index = True, unique=True)
     pwdhash = db.Column(db.String(120), index=True)
+    moderator = db.Column(db.Boolean, default= True)
+    admin = db.Column(db.Boolean, default = True)
     
     def __init__(self, username, email, password):
         self.username = username
@@ -18,7 +20,30 @@ class User(db.Model):
 
     def check_password(self, password):
         return check_password_hash(self.pwdhash, password)
+    
+    def make_admin(self):
+        user = User.query.filter_by(id = User.id).first()
+        user.admin = True
+        db.session.commit()
 
+    def make_moderator(self):
+        user= User.query.filter_by(id = User.id).first()
+        user.moderator = True
+        db.session.commit()
+
+    def is_admin(self):
+        user = User.query.filter_by(id = User.id).first()
+        if user.admin == True:
+            return True
+        else:
+            return False
+        
+    def is_moderator(self):
+        user = User.query.filter_by(id = User.id).first()
+        if user.moderator == True:
+            return True
+        else:
+            return False
 
     def is_authenticated(self):
         return True
@@ -51,6 +76,10 @@ class Doku(db.Model):
 
     def __repr__(self):
         return '<Doku %r>' % (self.title)
+
+    def removedoku(self):
+        doku = Doku.query.filter_by(id = Doku.id).first()
+        
 
 class Item(db.Model):
     __tablename__ = 'items'
