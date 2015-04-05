@@ -183,16 +183,25 @@ def makemoderator(id):
 @login_required
 def removedoku(id):
     doku = Doku.query.filter_by(id=id).first()
+    items = Item.query.filter_by(doku_id=id)
+    for item in items:
+        posts = Post.query.filter_by(item_id = id)
+        for post in posts:
+            post.removepost()
+        item.removeitem() 
     doku.removedoku()
-    flash('You have removed this doku')
+    flash('You have removed this doku and its associated items and posts')
     return redirect('overview')
 
 @tzundoku.route('/removeitem/<id>')
 @login_required
 def removeitem(id):
     item = Item.query.filter_by(id=id).first()
+    posts = Post.query.filter_by(item_id = id)
+    for post in posts:
+        post.removepost()
     item.removeitem()
-    flash('You have removed this item')
+    flash('You have removed this item and its associated posts!')
     return redirect('/overview')
 
 @tzundoku.route('/removepost/<id>')
