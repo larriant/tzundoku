@@ -6,7 +6,7 @@
   <hr>
   {% for post in posts %}
   <p>
-    {{ user.username|capitalize }} says: <b>{{ post.message }}</b> on <a href="/item/{{ post.item_id }}">{{ post.getitemtitle() }}</a>
+    {{ user.username|capitalize }} says: <b>{{ post.message }}</b> on <a href="/item?id={{ post.item_id }}">{{ post.getitemtitle() }}</a>
   </p>
   {% endfor %}
   <hr>

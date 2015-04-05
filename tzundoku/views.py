@@ -127,47 +127,46 @@ def privacy():
 @tzundoku.route('/doku', methods=['GET', 'POST'])
 def doku():
     user = User.query.filter_by(email= session['email']).first()
-    upvoteform = UpvoteForm()
-    downvoteform = DownvoteForm()
     form = AddItemForm()
-    itemdokuid = request.args['id']
-    doku = Doku.query.filter_by(id = itemdokuid).first()
+    dokuid = request.args['id']
+    doku = Doku.query.filter_by(id = dokuid).first()
     header = doku.title
-    items = Item.query.filter_by(doku_id = itemdokuid)
+    items = Item.query.filter_by(doku_id = dokuid)
     
     if request.method == 'POST':
         if form.validate() == False:
             return render_template('doku.html', header=header, items=items, form=form, upvoteform = upvoteform, downvoteform=downvoteform)
         else:
-            item = Item('music', form.title.data, form.artist.data, form.year.data, form.link.data, user.username, datetime.datetime.utcnow(), itemdokuid)
+            item = Item('music', form.title.data, form.artist.data, form.year.data, form.link.data, user.username, datetime.datetime.utcnow(), dokuid)
             db.session.add(item)
             db.session.commit()
             session['email'] = user.email
             flash('You have added an item')
-            return redirect(url_for('doku', id=itemdokuid)) 
+            return redirect(url_for('doku', id=dokuid)) 
 
     elif request.method == 'GET':
-        return render_template('doku.html', header=header, items=items, form=form, upvoteform=upvoteform, downvoteform=downvoteform)
+        return render_template('doku.html', header=header, items=items, form=form)
 
 
-@tzundoku.route('/item/<id>', methods=['GET', 'POST'])
-def item(id):
+@tzundoku.route('/item', methods=['GET', 'POST'])
+def item():
     user = User.query.filter_by(email= session['email']).first()
     form = AddPostForm()
-    item = Item.query.filter_by(id = id).first()
+    itemid = request.args['id']
+    item = Item.query.filter_by(id = itemid).first()
     header = item.title
-    posts = Post.query.filter_by(item_id = id)
+    posts = Post.query.filter_by(item_id = itemid)
 
 
     if request.method == 'POST':
         if form.validate() == False:
             return render_template('item.html', header=header, posts=posts, form=form)
         else:
-            post = Post(user.id, form.message.data, datetime.datetime.utcnow(), id)
+            post = Post(user.id, form.message.data, datetime.datetime.utcnow(), itemid)
             db.session.add(post)
             db.session.commit()
             flash('You have added a post!')
-            return redirect(url_for('item', id=id)) 
+            return redirect(url_for('item', id=itemid)) 
 
     elif request.method == 'GET':
         return render_template('item.html', header=header, posts=posts, form=form)
@@ -198,19 +197,23 @@ def removedoku(id):
 def removeitem(id):
     item = Item.query.filter_by(id=id).first()
     posts = Post.query.filter_by(item_id = id)
+    doku = Doku.query.filter_by(id=item.doku_id).first()
+    doku_id = doku.id
     for post in posts:
         post.removepost()
     item.removeitem()
     flash('You have removed this item and its associated posts!')
-    return redirect('/overview')
+    return redirect(url_for('doku', id=doku_id))
 
 @tzundoku.route('/removepost/<id>')
 @login_required
 def removepost(id):
     post = Post.query.filter_by(id=id).first()
+    item = Item.query.filter_by(id=post.item_id).first()
+    item_id = item.id
     post.removepost()
     flash('You have removed this post')
-    return redirect('/overview')    
+    return redirect(url_for('item', id=item_id))   
 
 
 @tzundoku.route('/upvoteitem/<id>')
@@ -219,7 +222,9 @@ def upvoteitem(id):
     item = Item.query.filter_by(id=id).first()
     item.upvoteitem()
     flash('You have upvoted this item')
-    return redirect('/overview')
+    doku = Doku.query.filter_by(id=item.doku_id).first()
+    doku_id = doku.id
+    return redirect(url_for('doku', id=doku_id))
 
 @tzundoku.route('/downvoteitem/<id>')
 @login_required
@@ -227,7 +232,9 @@ def downvoteitem(id):
     item = Item.query.filter_by(id=id).first()
     item.downvoteitem()
     flash('You have downvoted this item')
-    return redirect('/overview')
+    doku = Doku.query.filter_by(id=item.doku_id).first()
+    doku_id = doku.id
+    return redirect(url_for('doku', id=doku_id))
 
 @tzundoku.route('/upvotepost/<id>')
 @login_required
@@ -235,7 +242,9 @@ def upvotepost(id):
     post = Post.query.filter_by(id=id).first()
     post.upvotepost()
     flash('You have upvoted this post')
-    return redirect('/overview')
+    item = Item.query.filter_by(id=post.item_id).first()
+    item_id = item.id
+    return redirect(url_for('item', id=item_id))
 
 @tzundoku.route('/downvotepost/<id>')
 @login_required
@@ -243,7 +252,8 @@ def downvotepost(id):
     post = Post.query.filter_by(id=id).first()
     post.downvotepost()
     flash('You have downvoted this post')
-    return redirect('/overview')
-
+    item = Item.query.filter_by(id=post.item_id).first()
+    item_id = item.id
+    return redirect(url_for('item', id=item_id))
 
 

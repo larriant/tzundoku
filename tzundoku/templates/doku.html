@@ -7,7 +7,7 @@
 
 {% for a in items %}
     <p>
-    <a href="./item/{{ a.id }}">{{ a.title }}</a>,{{ a.artist }}, {{ a.year }}, {{ a.upvotes }}, {{ a.downvotes }}
+    <a href="./item?id={{ a.id }}">{{ a.title }}</a>,{{ a.artist }}, {{ a.year }}, {{ a.upvotes }}, {{ a.downvotes }}
     {% if current_user.is_authenticated() and current_user.is_admin() %}
     <a href="/removeitem/{{ a.id }}">(Delete)</a>
     {% endif %}
