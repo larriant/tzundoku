@@ -8,10 +8,14 @@
 <div class="postlist">
 {% for a in posts %}
     <div class="post">
-    <b><a href="/user/{{ a.added_by }}">{{ a.getusername()|capitalize }}</a>: </b>{{ a.message }}, {{ a.timestamp}}
-    {% if current_user.is_authenticated() and current_user.is_admin() %}
-    <a href="/removepost/{{ a.id }}">(Delete)</a> 
+    <b><a href="/user/{{ a.added_by }}">{{ a.getusername()|capitalize }}</a>: </b>{{ a.message }}, {{ a.upvotes }}, {{ a.downvotes }}
+    {% if current_user.is_authenticated() and current_user.is_admin() or current_user.id == a.added_by %}
+    <a href="/removepost/{{ a.id }}">(Delete)</a>  
     {% endif %}
+    {% if current_user.is_authenticated() %} 
+    <a href="/upvotepost/{{ a.id }}">(Upvote)</a>
+    <a href="/downvotepost/{{ a.id }}">(Downvote)</a>
+    {% endif %} 
     </div>
 {% endfor %}
 </div>

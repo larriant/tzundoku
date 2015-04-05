@@ -202,3 +202,39 @@ def removepost(id):
     post.removepost()
     flash('You have removed this post')
     return redirect('/overview')    
+
+
+@tzundoku.route('/upvoteitem/<id>')
+@login_required
+def upvoteitem(id):
+    item = Item.query.filter_by(id=id).first()
+    item.upvoteitem()
+    flash('You have upvoted this item')
+    return redirect('/overview')
+
+@tzundoku.route('/downvoteitem/<id>')
+@login_required
+def downvoteitem(id):
+    item = Item.query.filter_by(id=id).first()
+    item.downvoteitem()
+    flash('You have downvoted this item')
+    return redirect('/overview')
+
+@tzundoku.route('/upvotepost/<id>')
+@login_required
+def upvotepost(id):
+    post = Post.query.filter_by(id=id).first()
+    post.upvotepost()
+    flash('You have upvoted this post')
+    return redirect('/overview')
+
+@tzundoku.route('/downvotepost/<id>')
+@login_required
+def downvotepost(id):
+    post = Post.query.filter_by(id=id).first()
+    post.downvotepost()
+    flash('You have downvoted this post')
+    return redirect('/overview')
+
+
+

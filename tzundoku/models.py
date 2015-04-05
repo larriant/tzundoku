@@ -112,11 +112,16 @@ class Item(db.Model):
         self.timestamp = timestamp 
         self.doku_id = doku_id
 
-    def upvote(self):
+    def upvoteitem(self):
         item = Item.query.filter_by(id = self.id).first()
         item.upvotes += 1
         db.session.commit()
-        #figure out how to insert data to Item, then just call this
+
+    def downvoteitem(self):
+        item = Item.query.filter_by(id = self.id).first()
+        item.downvotes += 1
+        db.session.commit()
+
 
     def removeitem(self):
         item = Item.query.filter_by(id = self.id).first()
@@ -155,4 +160,14 @@ class Post(db.Model):
         post = Post.query.filter_by(id = self.id).first()
         db.session.delete(post)
         db.session.commit()
+    
+    def upvotepost(self):
+        post = Post.query.filter_by(id = self.id).first()
+        post.upvotes += 1
+        db.session.commit()
+
+    def downvotepost(self):
+        post = Post.query.filter_by(id = self.id).first()
+        post.downvotes += 1
+        db.session.commit()        
  
