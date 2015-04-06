@@ -3,15 +3,6 @@
 {% block content %}
 
 <div class="contentwrapper">
-{% with messages = get_flashed_messages() %}
-      {% if messages %}
-        {% for message in messages %}
-            {{ message }}
-        {% endfor %}
-      {% endif %}
-    {% endwith %}
-
-
 <h2 class="form-heading">List of Dokus Already Created</h2>
 
 {% for x in titles %}
@@ -21,6 +12,16 @@
     {% endif %}
     </p>
 {% endfor %}
+
+{% with messages = get_flashed_messages() %}
+      {% if messages %}
+        {% for message in messages %}
+            {{ message }}
+        {% endfor %}
+      {% endif %}
+    {% endwith %}
+
+
 
 {% if current_user.is_authenticated() == False %}
 <div class="notlogged">

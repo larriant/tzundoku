@@ -4,12 +4,15 @@ from werkzeug import generate_password_hash, check_password_hash
 class User(db.Model):
     __tablename__ = 'users'
     id = db.Column(db.Integer, primary_key = True)
-    username = db.Column(db.String(64), index = True, unique=True)
-    email = db.Column(db.String(64), index = True, unique=True)
-    pwdhash = db.Column(db.String(120), index=True)
+    username = db.Column(db.String(64), unique=True)
+    email = db.Column(db.String(64), unique=True)
+    pwdhash = db.Column(db.String(120))
     moderator = db.Column(db.Boolean, default= True)
     admin = db.Column(db.Boolean, default = True)
-    
+    posts = db.relationship('Post', backref='users')
+    items = db.relationship('Item', backref='users')
+
+ 
     def __init__(self, username, email, password):
         self.username = username
         self.email = email.lower()
@@ -63,10 +66,11 @@ class User(db.Model):
 class Doku(db.Model):
     __tablename__ = 'dokus'
     id = db.Column(db.Integer, primary_key = True)
-    title = db.Column(db.String(30), index = True, unique= True)
-    parent = db.Column(db.String(30), index = True, default="Top")
-    added_by = db.Column(db.Integer, index = True, default= 1)
+    title = db.Column(db.String(30), unique= True)
+    parent = db.Column(db.String(30), default="Top")
+    user_id = db.Column(db.Integer, default= 1)
     timestamp =  db.Column(db.DateTime)
+    items = db.relationship('Item', backref='dokus')
 
     def __init__(self, title, parent, added_by, timestamp):
         self.title = title
@@ -85,19 +89,18 @@ class Doku(db.Model):
 class Item(db.Model):
     __tablename__ = 'items'
     id = db.Column(db.Integer, primary_key = True)
-    type = db.Column(db.String(30), index = True)
-    title = db.Column(db.String(50), index = True)
-    author = db.Column(db.String(50), index = True)
-    composer = db.Column(db.String(50), index = True)
-    creator = db.Column(db.String(50), index = True)
-    artist = db.Column(db.String(50), index = True)
-    year = db.Column(db.Integer, index = True)
-    link = db.Column(db.String(50), index = True)
-    added_by = db.Column(db.Integer, index = True, default= 1)
+    type = db.Column(db.String(30))
+    title = db.Column(db.String(50))
+    author = db.Column(db.String(50))
+    composer = db.Column(db.String(50))
+    creator = db.Column(db.String(50))
+    artist = db.Column(db.String(50))
+    year = db.Column(db.Integer)
+    link = db.Column(db.String(50))
     timestamp = db.Column(db.DateTime)
-    doku_id = db.Column(db.Integer, index = True)
-    upvotes = db.Column(db.Integer, index = True, default = 0)
-    downvotes = db.Column(db.Integer, index = True, default = 0)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+    doku_id = db.Column(db.Integer, db.ForeignKey('dokus.id'))
+    posts = db.relationship('Post', backref='items')
 
     def __repr__(self):
         return '<Item %r>' % (self.title)
@@ -114,7 +117,7 @@ class Item(db.Model):
 
     def upvoteitem(self):
         item = Item.query.filter_by(id = self.id).first()
-        item.upvotes += 1
+        Itemvote(1, self.id, True)
         db.session.commit()
 
     def downvoteitem(self):
@@ -132,29 +135,20 @@ class Item(db.Model):
 class Post(db.Model):
     __tablename__ = 'posts'
     id = db.Column(db.Integer, primary_key = True)
-    added_by = db.Column(db.Integer, index = True, default = 1)
-    message = db.Column(db.String(500), index = True)
+    message = db.Column(db.String(500))
     timestamp = db.Column(db.DateTime)
-    item_id = db.Column(db.Integer, index=True)
-    upvotes = db.Column(db.Integer, index = True, default = 0)
-    downvotes =  db.Column(db.Integer, index = True, default = 0)
+    item_id = db.Column(db.Integer, db.ForeignKey('items.id'))
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
 
+    
     def __repr__(self):
         return '<Post %r>' % (self.message) 
 
-    def __init__(self,added_by, message, timestamp, item_id):
-        self.added_by = added_by
+    def __init__(self,user_id, message, timestamp, item_id):
+        self.user_id = user_id 
         self.message = message
         self.timestamp = timestamp 
-        self.item_id = item_id
-
-    def getusername(self):
-        user = User.query.filter_by(id = self.added_by).first()
-        return user.username
-    
-    def getitemtitle(self):
-        item = Item.query.filter_by(id = self.item_id).first()
-        return item.title
+        self.item_id = item_id 
 
     def removepost(self):
         post = Post.query.filter_by(id = self.id).first()
@@ -171,3 +165,15 @@ class Post(db.Model):
         post.downvotes += 1
         db.session.commit()        
  
+
+class Itemvote(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    added_by = db.Column(db.Integer, index=True, default=1)
+    item_id = db.Column(db.Integer, index=True)     
+    vote = db.Column(db.Boolean, default=False) #True is upvote, False is downvote
+
+    def __init__(self, added_by, item_id , vote):
+        self.added_by = added_by
+        self.item_id = item_id
+        self.vote = vote
+    

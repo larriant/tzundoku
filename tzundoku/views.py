@@ -59,7 +59,7 @@ def logout():
 @tzundoku.route("/overview", methods=['GET', 'POST'])
 def overview():
     form = AddDokuForm()
-    user = User.query.filter_by(email= session['email']).first()
+    user = User.query.filter_by(id = current_user.id).first()
 
     titles = []
     doku = Doku.query.all()
@@ -101,7 +101,7 @@ def user(id):
     if user == None:
         flash('User not found.')
         return redirect(url_for('overview'))
-    posts = Post.query.filter_by(added_by=id)
+    posts = Post.query.filter_by(user_id =id)
     return render_template('user.html',
                            user=user,
                            posts=posts)
@@ -126,7 +126,7 @@ def privacy():
 
 @tzundoku.route('/doku', methods=['GET', 'POST'])
 def doku():
-    user = User.query.filter_by(email= session['email']).first()
+    user = User.query.filter_by(id = current_user.id).first()
     form = AddItemForm()
     dokuid = request.args['id']
     doku = Doku.query.filter_by(id = dokuid).first()
@@ -150,7 +150,7 @@ def doku():
 
 @tzundoku.route('/item', methods=['GET', 'POST'])
 def item():
-    user = User.query.filter_by(email= session['email']).first()
+    user = User.query.filter_by(id = current_user.id).first()
     form = AddPostForm()
     itemid = request.args['id']
     item = Item.query.filter_by(id = itemid).first()
