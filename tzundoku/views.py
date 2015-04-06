@@ -196,10 +196,10 @@ def removedoku(id):
 
 @tzundoku.route('/removeitem/<id>/<doku_id>')
 @login_required
-def removeitem(id):
+def removeitem(id, doku_id):
     item = Item.query.filter_by(id=id).first()
     posts = Post.query.filter_by(item_id = id)
-    doku = Doku.query.filter_by(id=doku_id).items.any(id=item.dokus.id).first()
+    doku = Doku.query.filter_by(id=doku_id).first()
     #Problem!! Should remove just the doku page we are on
 
     doku_id = doku.id
