@@ -62,6 +62,11 @@ class User(db.Model):
             return unicode(self.id)
         except NameError:
             return str(self.id)
+
+doku_item = db.Table('doku_item', 
+    db.Column('doku_id', db.Integer, db.ForeignKey('dokus.id')),
+    db.Column('item_id', db.Integer, db.ForeignKey('items.id'))
+)
     
 class Doku(db.Model):
     __tablename__ = 'dokus'
@@ -70,12 +75,12 @@ class Doku(db.Model):
     parent = db.Column(db.String(30), default="Top")
     user_id = db.Column(db.Integer, default= 1)
     timestamp =  db.Column(db.DateTime)
-    items = db.relationship('Item', backref='dokus')
+    items = db.relationship('Item', secondary=doku_item, backref=db.backref('dokus'))
 
-    def __init__(self, title, parent, added_by, timestamp):
+    def __init__(self, title, parent, user_id, timestamp):
         self.title = title
         self.parent = parent
-        self.added_by = added_by
+        self.user_id = user_id 
         self.timestamp = timestamp 
 
     def __repr__(self):
@@ -85,7 +90,8 @@ class Doku(db.Model):
         doku = Doku.query.filter_by(id = self.id).first()
         db.session.delete(doku)
         db.session.commit()
-        
+
+       
 class Item(db.Model):
     __tablename__ = 'items'
     id = db.Column(db.Integer, primary_key = True)
@@ -99,21 +105,19 @@ class Item(db.Model):
     link = db.Column(db.String(50))
     timestamp = db.Column(db.DateTime)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
-    doku_id = db.Column(db.Integer, db.ForeignKey('dokus.id'))
     posts = db.relationship('Post', backref='items')
 
     def __repr__(self):
         return '<Item %r>' % (self.title)
     
-    def __init__(self, type, title, artist, year, link, added_by, timestamp, doku_id):
+    def __init__(self, type, title, artist, year, link, user_id, timestamp):
         self.type = type
         self.title= title 
         self.artist = artist
         self.year = year
         self.link = link
-        self.added_by = added_by
+        self.user_id= user_id 
         self.timestamp = timestamp 
-        self.doku_id = doku_id
 
     def upvoteitem(self):
         item = Item.query.filter_by(id = self.id).first()
@@ -168,12 +172,12 @@ class Post(db.Model):
 
 class Itemvote(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    added_by = db.Column(db.Integer, index=True, default=1)
+    user_id = db.Column(db.Integer, index=True, default=1)
     item_id = db.Column(db.Integer, index=True)     
     vote = db.Column(db.Boolean, default=False) #True is upvote, False is downvote
 
     def __init__(self, added_by, item_id , vote):
-        self.added_by = added_by
+        self.user_id = user_id 
         self.item_id = item_id
         self.vote = vote
     

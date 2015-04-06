@@ -131,13 +131,15 @@ def doku():
     dokuid = request.args['id']
     doku = Doku.query.filter_by(id = dokuid).first()
     header = doku.title
-    items = Item.query.filter_by(doku_id = dokuid)
+    items = Item.query.filter(Item.dokus.any(id = dokuid)).all()
     
     if request.method == 'POST':
         if form.validate() == False:
-            return render_template('doku.html', header=header, items=items, form=form, upvoteform = upvoteform, downvoteform=downvoteform)
+            return render_template('doku.html', header=header, items=items, form=form, doku=doku)
         else:
-            item = Item('music', form.title.data, form.artist.data, form.year.data, form.link.data, user.username, datetime.datetime.utcnow(), dokuid)
+            item = Item('music', form.title.data, form.artist.data, form.year.data, form.link.data, user.username, datetime.datetime.utcnow())
+            item.dokus.append(doku)
+            db.session.add(doku)
             db.session.add(item)
             db.session.commit()
             session['email'] = user.email
@@ -145,7 +147,7 @@ def doku():
             return redirect(url_for('doku', id=dokuid)) 
 
     elif request.method == 'GET':
-        return render_template('doku.html', header=header, items=items, form=form)
+        return render_template('doku.html', header=header, items=items, form=form, doku=doku)
 
 
 @tzundoku.route('/item', methods=['GET', 'POST'])
@@ -182,7 +184,7 @@ def makemoderator(id):
 @login_required
 def removedoku(id):
     doku = Doku.query.filter_by(id=id).first()
-    items = Item.query.filter_by(doku_id=id)
+    items = Item.query.filter(Item.dokus.any(id = doku.id)).all()
     for item in items:
         posts = Post.query.filter_by(item_id = id)
         for post in posts:
@@ -192,13 +194,16 @@ def removedoku(id):
     flash('You have removed this doku and its associated items and posts')
     return redirect('overview')
 
-@tzundoku.route('/removeitem/<id>')
+@tzundoku.route('/removeitem/<id>/<doku_id>')
 @login_required
 def removeitem(id):
     item = Item.query.filter_by(id=id).first()
     posts = Post.query.filter_by(item_id = id)
-    doku = Doku.query.filter_by(id=item.doku_id).first()
+    doku = Doku.query.filter_by(id=doku_id).items.any(id=item.dokus.id).first()
+    #Problem!! Should remove just the doku page we are on
+
     doku_id = doku.id
+
     for post in posts:
         post.removepost()
     item.removeitem()
