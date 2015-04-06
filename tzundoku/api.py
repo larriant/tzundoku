@@ -1,22 +1,38 @@
 import models
 
-from flask import Flask, jsonify, make_response
-from tzundoku import tzundoku, db
+from flask import Flask
+from flask.ext.restful import reqparse, abort, fields, marshal_with, Resource
+from tzundoku import tzundoku, db, tzundoku_api
 
-@tzundoku.route('/api/v1.0/users', methods=['GET'])
-def get_user_list():
-    users=models.User.query.all()
-    result=[{'id' : u.id, 'username' : u.username, 'email' : u.email} for u in users]
-    return jsonify(users=result)
+user_fields={
+    'id' : fields.Integer,
+    'username' : fields.String,
+    'email' : fields.String
+}
 
-@tzundoku.route('/api/v1.0/users/<username>', methods=['GET'])
-def get_user_info(username):
-    user_result=models.User.query.filter_by(username=username).all()
-    if len(user_result)==0:
-        return make_response(jsonify(error="Username not found"), 404)
-    elif len(user_result)==1:
-        user=user_result[0]
-        return jsonify(id=user.id, username=user.username, email=user.email)
-        
-    else:
-        return make_response(jsonify(error="Too many users"), 404)
+
+class UserList(Resource):
+    @marshal_with(user_fields)
+    def get(self):
+        users=models.User.query.all()
+        return users
+
+class SingleUser(Resource):
+    @marshal_with(user_fields)
+    def get(self, username):
+        users=models.User.query.filter_by(username=username).all()
+        return users
+
+doku_fields={
+    'name' : fields.String,
+    'id' : fields.Integer
+}
+
+class DokuResource(Resource):
+    @marshal_with(doku_fields)
+    def get(self, doku_name):
+        dokus=models.Doku.query.filter_by(doku=doku_name).all()
+        return dokus
+
+tzundoku_api.add_resource(UserList, '/users')
+tzundoku_api.add_resource(SingleUser, '/users/<string:username>')
