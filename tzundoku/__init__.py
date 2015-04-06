@@ -14,7 +14,7 @@ lm = LoginManager()
 lm.init_app(tzundoku)
 
 
-from tzundoku import views, models
+from tzundoku import views, models, api
 
 lm.login_view = 'login'
 
