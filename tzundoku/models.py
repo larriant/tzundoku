@@ -1,3 +1,5 @@
+import datetime
+
 from tzundoku import db
 from werkzeug import generate_password_hash, check_password_hash
 
@@ -74,10 +76,10 @@ class Doku(db.Model):
     title = db.Column(db.String(30), unique= True)
     parent = db.Column(db.String(30), default="Top")
     user_id = db.Column(db.Integer, default= 1)
-    timestamp =  db.Column(db.DateTime)
+    timestamp =  db.Column(db.DateTime, default=datetime.datetime.utcnow)
     items = db.relationship('Item', secondary=doku_item, backref=db.backref('dokus'))
 
-    def __init__(self, title, parent, user_id, timestamp):
+    def __init__(self, title, parent=None, user_id=None, timestamp=None):
         self.title = title
         self.parent = parent
         self.user_id = user_id 
@@ -86,7 +88,7 @@ class Doku(db.Model):
     def __repr__(self):
         return '<Doku %r>' % (self.title)
 
-    def removedoku(self):
+    def delete(self):
         doku = Doku.query.filter_by(id = self.id).first()
         db.session.delete(doku)
         db.session.commit()
@@ -130,7 +132,7 @@ class Item(db.Model):
         db.session.commit()
 
 
-    def removeitem(self):
+    def delete(self):
         item = Item.query.filter_by(id = self.id).first()
         db.session.delete(item)
         db.session.commit()
@@ -154,7 +156,7 @@ class Post(db.Model):
         self.timestamp = timestamp 
         self.item_id = item_id 
 
-    def removepost(self):
+    def delete(self):
         post = Post.query.filter_by(id = self.id).first()
         db.session.delete(post)
         db.session.commit()
@@ -175,7 +177,8 @@ class Itemvote(db.Model):
     user_id = db.Column(db.Integer, default=1)
     item_id = db.Column(db.Integer)     
     upvote = db.Column(db.Boolean, default=False) #True is upvote, False is downvote
-
+    
+    # POSSIBLE BUG? added_by is not used here
     def __init__(self, added_by, item_id , vote):
         self.user_id = user_id 
         self.item_id = item_id

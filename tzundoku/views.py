@@ -188,9 +188,9 @@ def removedoku(id):
     for item in items:
         posts = Post.query.filter_by(item_id = id)
         for post in posts:
-            post.removepost()
-        item.removeitem() 
-    doku.removedoku()
+            post.delete()
+        item.delete() 
+    doku.delete()
     flash('You have removed this doku and its associated items and posts')
     return redirect('overview')
 
@@ -205,18 +205,18 @@ def removeitem(id, doku_id):
     doku_id = doku.id
 
     for post in posts:
-        post.removepost()
-    item.removeitem()
+        post.delete()
+    item.delete()
     flash('You have removed this item and its associated posts!')
     return redirect(url_for('doku', id=doku_id))
 
 @tzundoku.route('/removepost/<id>')
 @login_required
-def removepost(id):
+def delete(id):
     post = Post.query.filter_by(id=id).first()
     item = Item.query.filter_by(id=post.item_id).first()
     item_id = item.id
-    post.removepost()
+    post.delete()
     flash('You have removed this post')
     return redirect(url_for('item', id=item_id))   
 
