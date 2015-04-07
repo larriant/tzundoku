@@ -177,7 +177,8 @@ class Itemvote(db.Model):
     user_id = db.Column(db.Integer, default=1)
     item_id = db.Column(db.Integer)     
     upvote = db.Column(db.Boolean, default=False) #True is upvote, False is downvote
-
+    
+    # POSSIBLE BUG? added_by is not used here
     def __init__(self, added_by, item_id , vote):
         self.user_id = user_id 
         self.item_id = item_id
