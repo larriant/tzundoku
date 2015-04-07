@@ -1,3 +1,5 @@
+import datetime
+
 from tzundoku import db
 from werkzeug import generate_password_hash, check_password_hash
 
@@ -74,10 +76,10 @@ class Doku(db.Model):
     title = db.Column(db.String(30), unique= True)
     parent = db.Column(db.String(30), default="Top")
     user_id = db.Column(db.Integer, default= 1)
-    timestamp =  db.Column(db.DateTime)
+    timestamp =  db.Column(db.DateTime, default=datetime.datetime.utcnow)
     items = db.relationship('Item', secondary=doku_item, backref=db.backref('dokus'))
 
-    def __init__(self, title, parent, user_id, timestamp):
+    def __init__(self, title, parent=None, user_id=None, timestamp=None):
         self.title = title
         self.parent = parent
         self.user_id = user_id 
