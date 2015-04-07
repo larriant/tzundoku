@@ -64,27 +64,23 @@ def overview():
     titles = []
     doku = Doku.query.all()
     for a in doku:
-        if a.parent == "Top":
             titles.append(a)
-            for b in doku:
-                if b.parent == a.title:
-                    titles.append(b)
-                    for c in doku:
-                        if c.parent == b.title:
-                            titles.append(c)
-
-
      
     if request.method == 'POST':
         if form.validate() == False:
             return render_template('overview.html', titles=titles, form=form)
         else:
             appears_under_doku = Doku.query.filter_by(title=form.appears_under.data).first()
-            doku = Doku(form.title.data, user.id, datetime.datetime.utcnow())
-            appears_under_doku.appears_over.append(doku)
-            db.session.add(appears_under_doku)
-            db.session.add(doku)
-            db.session.commit()
+            if appears_under_doku == None:
+                doku = Doku(form.title.data, user.id, datetime.datetime.utcnow())
+                db.session.add(doku)
+                db.session.commit()
+            else: 
+                doku = Doku(form.title.data, user.id, datetime.datetime.utcnow())
+                appears_under_doku.appears_over.append(doku)
+                db.session.add(appears_under_doku)
+                db.session.add(doku)
+                db.session.commit()
             flash('You have created a new Doku!')
             return redirect(url_for('overview')) 
 
