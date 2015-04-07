@@ -45,7 +45,7 @@ class RegistrationForm(Form):
 
 class AddDokuForm(Form):
     title = TextField('title', [validators.required("Please enter a title")])
-    parent = TextField('parent', [validators.required("Please enter the parent")]) 
+    appears_under = TextField('appears_under') 
     submit = SubmitField('Add Doku')
 
 

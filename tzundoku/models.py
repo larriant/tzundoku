@@ -72,8 +72,8 @@ doku_item = db.Table('doku_item',
     db.Column('item_id', db.Integer, db.ForeignKey('items.id'))
 )
 
-appears_in = db.Table('appears_in',
-    db.Column('appears_in_id', db.Integer, db.ForeignKey('dokus.id')),
+appear_under= db.Table('appear_under',
+    db.Column('appears_under_id', db.Integer, db.ForeignKey('dokus.id')),
     db.Column('appears_over_id', db.Integer, db.ForeignKey('dokus.id'))
 )
     
@@ -81,15 +81,13 @@ class Doku(db.Model):
     __tablename__ = 'dokus'
     id = db.Column(db.Integer, primary_key = True)
     title = db.Column(db.String(30), unique= True)
-    parent = db.Column(db.String(30), default="Top")
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
     timestamp =  db.Column(db.DateTime, default=datetime.datetime.utcnow)
     items = db.relationship('Item', secondary=doku_item, backref=db.backref('dokus'))
-    appears_over = db.relationship('Doku', secondary=appears_in, primaryjoin="Doku.id == appears_in.c.appears_in_id", secondaryjoin="Doku.id == appears_in.c.appears_over_id", backref=db.backref('appears_in'))
+    appears_over = db.relationship('Doku', secondary=appear_under, primaryjoin="Doku.id == appear_under.c.appears_under_id", secondaryjoin="Doku.id == appear_under.c.appears_over_id", backref=db.backref('appear_under'))
 
-    def __init__(self, title, parent=None, user_id=None, timestamp=None):
+    def __init__(self, title, user_id=None, timestamp=None):
         self.title = title
-        self.parent = parent
         self.user_id = user_id 
         self.timestamp = timestamp 
 

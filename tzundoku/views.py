@@ -79,7 +79,10 @@ def overview():
         if form.validate() == False:
             return render_template('overview.html', titles=titles, form=form)
         else:
-            doku = Doku(form.title.data, form.parent.data, user.id, datetime.datetime.utcnow())
+            appears_under_doku = Doku.query.filter_by(title=form.appears_under.data).first()
+            doku = Doku(form.title.data, user.id, datetime.datetime.utcnow())
+            appears_under_doku.appears_over.append(doku)
+            db.session.add(appears_under_doku)
             db.session.add(doku)
             db.session.commit()
             flash('You have created a new Doku!')
