@@ -245,7 +245,7 @@ def downvoteitem(id):
 @login_required
 def upvotepost(id):
     post = Post.query.filter_by(id=id).first()
-    post.upvotepost()
+    post.upvote()
     flash('You have upvoted this post')
     item = Item.query.filter_by(id=post.item_id).first()
     item_id = item.id

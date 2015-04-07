@@ -1,4 +1,5 @@
 import datetime
+from flask.ext.login import current_user, login_required
 
 from tzundoku import db
 from werkzeug import generate_password_hash, check_password_hash
@@ -13,8 +14,9 @@ class User(db.Model):
     admin = db.Column(db.Boolean, default = True)
     posts = db.relationship('Post', backref='users')
     items = db.relationship('Item', backref='users')
+    dokus = db.relationship('Doku', backref='users')
+    postvotes = db.relationship('Postvote', backref='users')
 
- 
     def __init__(self, username, email, password):
         self.username = username
         self.email = email.lower()
@@ -69,15 +71,21 @@ doku_item = db.Table('doku_item',
     db.Column('doku_id', db.Integer, db.ForeignKey('dokus.id')),
     db.Column('item_id', db.Integer, db.ForeignKey('items.id'))
 )
+
+appears_in = db.Table('appears_in',
+    db.Column('appears_in_id', db.Integer, db.ForeignKey('dokus.id')),
+    db.Column('appears_over_id', db.Integer, db.ForeignKey('dokus.id'))
+)
     
 class Doku(db.Model):
     __tablename__ = 'dokus'
     id = db.Column(db.Integer, primary_key = True)
     title = db.Column(db.String(30), unique= True)
     parent = db.Column(db.String(30), default="Top")
-    user_id = db.Column(db.Integer, default= 1)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
     timestamp =  db.Column(db.DateTime, default=datetime.datetime.utcnow)
     items = db.relationship('Item', secondary=doku_item, backref=db.backref('dokus'))
+    appears_over = db.relationship('Doku', secondary=appears_in, primaryjoin="Doku.id == appears_in.c.appears_in_id", secondaryjoin="Doku.id == appears_in.c.appears_over_id", backref=db.backref('appears_in'))
 
     def __init__(self, title, parent=None, user_id=None, timestamp=None):
         self.title = title
@@ -121,12 +129,12 @@ class Item(db.Model):
         self.user_id= user_id 
         self.timestamp = timestamp 
 
-    def upvoteitem(self):
+    def upvote(self):
         item = Item.query.filter_by(id = self.id).first()
         Itemvote(1, self.id, True)
         db.session.commit()
 
-    def downvoteitem(self):
+    def downvote(self):
         item = Item.query.filter_by(id = self.id).first()
         item.downvotes += 1
         db.session.commit()
@@ -145,8 +153,8 @@ class Post(db.Model):
     timestamp = db.Column(db.DateTime)
     item_id = db.Column(db.Integer, db.ForeignKey('items.id'))
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+    postvotes = db.relationship('Postvote', backref='posts')
 
-    
     def __repr__(self):
         return '<Post %r>' % (self.message) 
 
@@ -161,25 +169,31 @@ class Post(db.Model):
         db.session.delete(post)
         db.session.commit()
     
-    def upvotepost(self):
+    def upvote(self):
         post = Post.query.filter_by(id = self.id).first()
-        post.upvotes += 1
+        postvote = Postvote(current_user.id, post.item_id, True)
+        db.session.add(postvote)
         db.session.commit()
 
-    def downvotepost(self):
+    def downvote(self):
         post = Post.query.filter_by(id = self.id).first()
-        post.downvotes += 1
+        postvote = Postvote(current_user.id, post.item_id, False)
+        db.session.add(postvote)
         db.session.commit()        
- 
 
-class Itemvote(db.Model):
+    def numupvotes(self):
+        post = Post.query.filter_by(id=self.id).first()
+        num = Postvote.query.filter_by(post_id=post.id and Postvote.upvote == True).count()
+        return num
+
+ 
+class Postvote(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.Integer, default=1)
-    item_id = db.Column(db.Integer)     
-    upvote = db.Column(db.Boolean, default=False) #True is upvote, False is downvote
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+    post_id = db.Column(db.Integer, db.ForeignKey('posts.id'))     
+    upvote = db.Column(db.Boolean) #True is upvote, False is downvote
     
-    # POSSIBLE BUG? added_by is not used here
-    def __init__(self, added_by, item_id , vote):
+    def __init__(self, user_id , item_id , vote):
         self.user_id = user_id 
         self.item_id = item_id
         self.vote = vote
