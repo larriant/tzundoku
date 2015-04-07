@@ -196,7 +196,7 @@ def removedoku(id):
 
 @tzundoku.route('/removeitem/<id>/<doku_id>')
 @login_required
-def delete(id, doku_id):
+def removeitem(id, doku_id):
     item = Item.query.filter_by(id=id).first()
     posts = Post.query.filter_by(item_id = id)
     doku = Doku.query.filter_by(id=doku_id).first()
