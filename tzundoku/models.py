@@ -88,7 +88,7 @@ class Doku(db.Model):
     def __repr__(self):
         return '<Doku %r>' % (self.title)
 
-    def removedoku(self):
+    def delete(self):
         doku = Doku.query.filter_by(id = self.id).first()
         db.session.delete(doku)
         db.session.commit()
@@ -132,7 +132,7 @@ class Item(db.Model):
         db.session.commit()
 
 
-    def removeitem(self):
+    def delete(self):
         item = Item.query.filter_by(id = self.id).first()
         db.session.delete(item)
         db.session.commit()
@@ -156,7 +156,7 @@ class Post(db.Model):
         self.timestamp = timestamp 
         self.item_id = item_id 
 
-    def removepost(self):
+    def delete(self):
         post = Post.query.filter_by(id = self.id).first()
         db.session.delete(post)
         db.session.commit()
