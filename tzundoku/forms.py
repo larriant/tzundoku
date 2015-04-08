@@ -23,8 +23,8 @@ class LoginForm(Form):
 
 class RegistrationForm(Form):
     username = TextField('username', [validators.required("Please enter a Username"), validators.Length(min=4, max=20)])
-    email = TextField('email', [validators.required("Please enter an email"), validators.Email("Please enter an email"), validators.Length(min=6, max=35)])
-    password = PasswordField('password', [validators.required(), validators.EqualTo('confirm', message = 'Passwords must match')])
+    email = TextField('email', [validators.required("Please enter an email"), validators.Email("Please enter an email"), validators.Length(min=6, max=35, message="Please enter an email between 6 and 35 characters long")])
+    password = PasswordField('password', [validators.required("Please enter a password"), validators.EqualTo('confirm', message = 'Passwords must match'), validators.Length(min=6, max=25, message="Please enter a password between 6 and 25 characters long")])
     confirm = PasswordField('confirmpassword', [validators.required("Please enter a Password")])
     submit = SubmitField("Register")
 
@@ -39,13 +39,19 @@ class RegistrationForm(Form):
         if user:
             self.email.errors.append("That email is already taken")
             return False
+        
+        user2 = User.query.filter_by(username = self.username.data.lower()).first()
+        if user2:
+            self.username.errors.append("That username is already taken")
+            return False 
+
         else:
             return True
 
 
 class AddDokuForm(Form):
     title = TextField('title', [validators.required("Please enter a title")])
-    appears_under = TextField('appears_under') 
+    parent = TextField('parent') 
     submit = SubmitField('Add Doku')
 
 
@@ -53,12 +59,11 @@ class AddDokuForm(Form):
         Form.__init__(self, *args, **kwargs)
 
 class AddItemForm(Form):
-    title = TextField('title', [validators.required()])
+    title = TextField('title', [validators.required("Please enter a title")])
     artist = TextField('artist', [validators.required()])
     year = TextField('year', [validators.required()])
     link = TextField('link', [validators.required()])
     submit = SubmitField('Add Item')
-    
     
     def __init__(self, *args, **kwargs):
         Form.__init__(self, *args, **kwargs)
@@ -70,18 +75,5 @@ class AddPostForm(Form):
     
     def __init__(self, *args, **kwargs):
         Form.__init__(self, *args, **kwargs)
-
-class UpvoteForm(Form):
-    submit = SubmitField('Up')
- 
-    def __init__(self, *args, **kwargs):
-        Form.__init__(self, *args, **kwargs)
-
-class DownvoteForm(Form):
-    submit = SubmitField('Do')
- 
-    def __init__(self, *args, **kwargs):
-        Form.__init__(self, *args, **kwargs)
-
 
 

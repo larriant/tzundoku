@@ -2,21 +2,45 @@
 {% block title %}{{ header }}{% endblock %}
 {% block content %}
 
-
 <div class="contentwrapper">
     <h1>{{ header }}</h1>
 <div class="postlist">
 {% for a in posts %}
     <div class="post">
-    <b><a href="/user/{{ a.user_id }}">{{ a.users.username|capitalize }}</a>: </b>{{ a.message }}, {{ a.numupvotes() }}
+    <b><a href="/user/{{ a.user_id }}">{{ a.users.username|capitalize }}</a>: </b>{{ a.message }}, {{ a.numupvotes() }}, {{ a.numdownvotes() }}
     {% if current_user.is_authenticated() and current_user.is_admin() or current_user.id == a.user_id %}
     <a href="/removepost/{{ a.id }}">(Delete)</a>  
     {% endif %}
     {% if current_user.is_authenticated() %} 
-    <a href="/upvotepost/{{ a.id }}">(Upvote)</a>
-    <a href="/downvotepost/{{ a.id }}">(Downvote)</a>
+    <button id="upvotebutton" type="button">(Upvote)</button>
+    <button id="downvotebutton" type="button">(Downvote)</button>
     {% endif %} 
     </div>
+<script>
+$(document).ready(function(){
+    $("#upvotebutton").click(function(){
+    console.log("Javascript Working"); 
+    var upvote = true;
+    var post_id = "{{ a.id }}";
+    var user_id = "{{ a.user_id }}";
+
+    var nud = {
+        "upvote" : upvote,
+        "post_id" : post_id,
+        "user_id" : user_id
+    }
+    $.ajax({
+        type: "POST",
+        url: "/upvotepost",
+        data: JSON.stringify(nud, null, '\t'),
+        contentType: 'application/json;charset=UTF-8',
+        success: function(result) {
+            console.log(result);
+        }
+    })
+    });
+})
+</script>
 {% endfor %}
 </div>
 </br>

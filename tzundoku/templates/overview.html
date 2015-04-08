@@ -37,7 +37,7 @@
 <h2 class="form-register-heading">Add a New Doku</h2>
 
 {{ form.title(class_='form-control', placeholder="Doku Name" ) }}
-{{ form.appears_under(class_='form-control', placeholder="Appears Under") }}
+{{ form.parent(class_='form-control', placeholder="Doku Parent") }}
 {{ form.submit(class_='btn btn-lg btn-primary btn-block') }}
 
 
@@ -45,7 +45,7 @@
     <div class="flash">{{ message }}</div>
 {% endfor %}
    
-{% for message in form.appears_under.errors %}
+{% for message in form.parent.errors %}
     <div class="flash">{{ message }}</div>
 {% endfor %}
 </form>

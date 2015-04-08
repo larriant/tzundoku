@@ -12,6 +12,7 @@
     <link  rel="stylesheet" type=text/css  href="{{ url_for('static', filename='tzundoku.css') }}"> 
     <link  rel="stylesheet" type=text/css href="{{ url_for('static', filename='forms.css') }}"> 
     <link  rel="stylesheet" type=text/css href="{{ url_for('static', filename='bootstrap.min.css') }}"> 
+    <script type=text/javascript src="{{url_for('static', filename='jquery.js') }}"></script>
 
   </head>
 <!-- NAVBAR
@@ -61,8 +62,7 @@
 
     <!-- Bootstrap core JavaScript
     ================================================== -->
-    <!-- Placed at the end of the document so the pages load faster -->
-    <script type=text/javascript src="{{url_for('static', filename='jquery.js') }}"></script>
+    <!-- Placed at the end of the document so the pages load faster --> 
     <script src="{{ url_for('static', filename='bootstrap.min.js') }}"></script>
   </body>
 </html>

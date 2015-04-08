@@ -72,9 +72,9 @@ doku_item = db.Table('doku_item',
     db.Column('item_id', db.Integer, db.ForeignKey('items.id'))
 )
 
-appear_under= db.Table('appear_under',
-    db.Column('appears_under_id', db.Integer, db.ForeignKey('dokus.id')),
-    db.Column('appears_over_id', db.Integer, db.ForeignKey('dokus.id'))
+parents = db.Table('parents',
+    db.Column('child_id', db.Integer, db.ForeignKey('dokus.id')),
+    db.Column('parent_id', db.Integer, db.ForeignKey('dokus.id'))
 )
     
 class Doku(db.Model):
@@ -84,7 +84,7 @@ class Doku(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
     timestamp =  db.Column(db.DateTime, default=datetime.datetime.utcnow)
     items = db.relationship('Item', secondary=doku_item, backref=db.backref('dokus'))
-    appears_over = db.relationship('Doku', secondary=appear_under, primaryjoin="Doku.id == appear_under.c.appears_under_id", secondaryjoin="Doku.id == appear_under.c.appears_over_id", backref=db.backref('appear_under'))
+    children = db.relationship('Doku', secondary=parents, primaryjoin="Doku.id == parents.c.child_id", secondaryjoin="Doku.id == parents.c.parent_id", backref=db.backref('parents'))
 
     def __init__(self, title, user_id=None, timestamp=None):
         self.title = title
@@ -181,15 +181,21 @@ class Post(db.Model):
 
     def numupvotes(self):
         post = Post.query.filter_by(id=self.id).first()
-        num = Postvote.query.filter_by(post_id=post.id and Postvote.upvote == True).count()
+        num = Postvote.query.filter_by(post_id=post.id and Postvote.vote == True).count()
+        return num
+    
+    def numdownvotes(self):
+        post = Post.query.filter_by(id=self.id).first()
+        num = Postvote.query.filter_by(post_id=self.id and Postvote.vote == False).count()
         return num
 
  
 class Postvote(db.Model):
+    __tablename__='postvotes'
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
     post_id = db.Column(db.Integer, db.ForeignKey('posts.id'))     
-    upvote = db.Column(db.Boolean) #True is upvote, False is downvote
+    vote = db.Column(db.Boolean) #True is upvote, False is downvote
     
     def __init__(self, user_id , item_id , vote):
         self.user_id = user_id 

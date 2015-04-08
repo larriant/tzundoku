@@ -1,7 +1,7 @@
-from flask import render_template, request, redirect, url_for, flash, session
+from flask import render_template, request, redirect, url_for, flash, session, json
 from flask.ext.login import login_user, logout_user, current_user, login_required
 from tzundoku import tzundoku, db, lm
-from .forms import LoginForm, RegistrationForm, AddDokuForm, AddItemForm, AddPostForm, UpvoteForm, DownvoteForm
+from .forms import LoginForm, RegistrationForm, AddDokuForm, AddItemForm, AddPostForm
 from .models import User, Doku, Item, Post
 
 import datetime
@@ -62,28 +62,61 @@ def overview():
     user = User.query.filter_by(id = current_user.id).first()
 
     titles = []
-    doku = Doku.query.all()
-    for a in doku:
-            titles.append(a)
+    elderdoku = Doku.query.filter_by(title="Music").first()
+    titles.append(elderdoku)
+    for a in elderdoku.children:
+        if a == elderdoku:
+            continue  
+        titles.append(a)
+        for b in a.children:
+            if b == elderdoku:
+                continue 
+            titles.append(b) 
+            for c in b.children:
+                if c == elderdoku:
+                    continue 
+                titles.append(c)
      
     if request.method == 'POST':
         if form.validate() == False:
             return render_template('overview.html', titles=titles, form=form)
         else:
-            appears_under_doku = Doku.query.filter_by(title=form.appears_under.data).first()
-            if appears_under_doku == None:
-                doku = Doku(form.title.data, user.id, datetime.datetime.utcnow())
-                db.session.add(doku)
-                db.session.commit()
-            else: 
-                doku = Doku(form.title.data, user.id, datetime.datetime.utcnow())
-                appears_under_doku.appears_over.append(doku)
-                db.session.add(appears_under_doku)
-                db.session.add(doku)
-                db.session.commit()
-            flash('You have created a new Doku!')
-            return redirect(url_for('overview')) 
+            doku_exists = Doku.query.filter_by(title=form.title.data).first()
+            if doku_exists:
+                newparent = Doku.query.filter_by(title=form.parent.data).first()
+                if newparent == None:
+                    doku_exists.parents.append(doku_exists)
+                    db.session.add(doku_exists)
+                    db.session.commit() 
+                    flash('This doku already exists, you have added itself as a parent') 
+                    return redirect(url_for('overview'))
+                else: 
+                    doku_with_parent = Doku(form.title.data, user.id, datetime.datetime.utcnow())
+                    newparent.parents.append(doku_with_parent)
+                    db.session.add(newparent)
+                    db.session.add(doku_with_parent)
+                    db.session.commit()
+                    flash('This doku already exists, but you have added a parent!')
+                    return redirect(url_for('overview')) 
 
+            else: #doku already exists
+                newparent = Doku.query.filter_by(title=form.parent.data).first()
+                if newparent == None:
+                    doku_no_parent = Doku(form.title.data, user.id, datetime.datetime.utcnow())
+                    doku_no_parent.parents.append(doku_no_parent)
+                    db.session.add(doku_no_parent)
+                    db.session.commit()
+                    flash('You have created a new Doku, with itself as as parent')
+                    return redirect(url_for('overview')) 
+                else: 
+                    doku_with_parent = Doku(form.title.data, user.id, datetime.datetime.utcnow())
+                    newparent.parents.append(doku_with_parent)
+                    db.session.add(newparent)
+                    db.session.add(doku_with_parent)
+                    db.session.commit()
+                    flash('You have created a new Doku, with a new parent')
+                    return redirect(url_for('overview'))
+                
     elif request.method == 'GET':
         return render_template('overview.html', titles=titles, form=form)  
 
@@ -131,22 +164,37 @@ def doku():
     doku = Doku.query.filter_by(id = dokuid).first()
     header = doku.title
     items = Item.query.filter(Item.dokus.any(id = dokuid)).all()
-    
+    items2 = []
+    for a in doku.children:
+        if a == doku:
+            continue
+        else:
+            items2.append(Item.query.filter(Item.dokus.any(id= a.id)).all())
+
     if request.method == 'POST':
         if form.validate() == False:
-            return render_template('doku.html', header=header, items=items, form=form, doku=doku)
+            return render_template('doku.html', header=header, items=items, items2=items2, form=form, doku=doku)
         else:
-            item = Item('music', form.title.data, form.artist.data, form.year.data, form.link.data, user.username, datetime.datetime.utcnow())
-            item.dokus.append(doku)
-            db.session.add(doku)
-            db.session.add(item)
-            db.session.commit()
-            session['email'] = user.email
-            flash('You have added an item')
-            return redirect(url_for('doku', id=dokuid)) 
+            item_exists = Item.query.filter_by(title = form.title.data).first()
+            if item_exists:
+                item_exists.dokus.append(doku)
+                db.session.add(item_exists)
+                db.session.add(doku)
+                db.session.commit() 
+                flash('You have added an item that already exists to this doku')
+                return redirect(url_for('doku', id=dokuid))
+            else:
+                item = Item('music', form.title.data, form.artist.data, form.year.data, form.link.data, user.username, datetime.datetime.utcnow())
+                item.dokus.append(doku)
+                db.session.add(doku)
+                db.session.add(item)
+                db.session.commit()
+                session['email'] = user.email
+                flash('You have added an item')
+                return redirect(url_for('doku', id=dokuid)) 
 
     elif request.method == 'GET':
-        return render_template('doku.html', header=header, items=items, form=form, doku=doku)
+        return render_template('doku.html', header=header, items=items, items2=items2, form=form, doku=doku)
 
 
 @tzundoku.route('/item', methods=['GET', 'POST'])
@@ -240,15 +288,12 @@ def downvoteitem(id):
     doku_id = doku.id
     return redirect(url_for('doku', id=doku_id))
 
-@tzundoku.route('/upvotepost/<id>')
-@login_required
-def upvotepost(id):
-    post = Post.query.filter_by(id=id).first()
-    post.upvote()
-    flash('You have upvoted this post')
-    item = Item.query.filter_by(id=post.item_id).first()
-    item_id = item.id
-    return redirect(url_for('item', id=item_id))
+@tzundoku.route('/upvotepost', methods=["POST"])
+def upvotepost():
+    if request.method == "POST":  
+        postvote = Postvote(request.json['user_id'], request.json['post_id'], request.json['vote'])
+        session.add(postvote)
+        session.commit()
 
 @tzundoku.route('/downvotepost/<id>')
 @login_required
