@@ -6,6 +6,7 @@
     <h1>{{ header }} Doku</h1>
 
 {% for a in items %} 
+    <div class="item">
     <a href="./item?id={{ a.id }}">{{ a.title }}</a>, {{ a.artist }}, {{ a.year }}
     {% if current_user.is_authenticated() and current_user.is_admin() %}
     <a href="/removeitem/{{ a.id }}/ {{ doku.id }}">(Delete)</a>
@@ -13,6 +14,7 @@
     {% if current_user.is_authenticated() %} 
     <a href="/upvoteitem/{{ a.id }}">(Upvote)</a>
     <a href="/downvoteitem/{{ a.id }}">(Downvote)</a>
+    </div>
     {% endif %}
 {% endfor %}
 

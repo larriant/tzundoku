@@ -287,5 +287,8 @@ margin-bottom:10px;
 .subdoku {
   margin-top:100px;
   border:1px solid;
+}
 
+.item {
+margin-top:20px;
 }

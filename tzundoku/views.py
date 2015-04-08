@@ -64,18 +64,19 @@ def overview():
     titles = []
     elderdoku = Doku.query.filter_by(title="Music").first()
     titles.append(elderdoku)
-    for a in elderdoku.children:
-        if a == elderdoku:
-            continue  
-        titles.append(a)
-        for b in a.children:
-            if b == elderdoku:
-                continue 
-            titles.append(b) 
-            for c in b.children:
-                if c == elderdoku:
+    if elderdoku:
+        for a in elderdoku.children:
+            if a.id == elderdoku.id:
+                continue  
+            titles.append(a)
+            for b in a.children:
+                if b.id == elderdoku.id:
                     continue 
-                titles.append(c)
+                titles.append(b) 
+                for c in b.children:
+                    if c.id == elderdoku.id:
+                        continue 
+                    titles.append(c)
      
     if request.method == 'POST':
         if form.validate() == False:

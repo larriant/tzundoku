@@ -4,6 +4,12 @@
 
 <div class="contentwrapper">
     <h1>{{ header }}</h1>
+<div class="details">
+<p> This item appears on: Music, Hip Hop, Japanese Hip Hop, Killer Mike Albums </p>
+<p> The wikipedia link can be found: <a>here</a>.</p>
+<p> To buy this item: go <a>here</a>
+
+</div> 
 <div class="postlist">
 {% for a in posts %}
     <div class="post">
@@ -51,7 +57,6 @@ $(document).ready(function(){
         {% endfor %}
       {% endif %}
     {% endwith %}
-
 
 {% if current_user.is_authenticated() == False %}
 <div class="notlogged">
