@@ -99,7 +99,6 @@ class Doku(db.Model):
         db.session.delete(doku)
         db.session.commit()
 
-       
 class Item(db.Model):
     __tablename__ = 'items'
     id = db.Column(db.Integer, primary_key = True)
@@ -164,32 +163,16 @@ class Post(db.Model):
 
     def delete(self):
         post = Post.query.filter_by(id = self.id).first()
+        for a in post.postvotes:
+            db.session.delete(a)
         db.session.delete(post)
-        db.session.commit()
-    
-    def upvote(self):
-        post = Post.query.filter_by(id = self.id).first()
-        postvote = Postvote(current_user.id, post.item_id, True)
-        db.session.add(postvote)
-        db.session.commit()
-
-    def downvote(self):
-        post = Post.query.filter_by(id = self.id).first()
-        postvote = Postvote(current_user.id, post.item_id, False)
-        db.session.add(postvote)
         db.session.commit()        
 
     def numvotes(self):
-        upvotes = Postvote.query.filter_by(post_id=self.id and Postvote.vote == True).count()
-        downvotes = Postvote.query.filter_by(post_id=self.id and Postvote.vote == False).count() 
+        upvotes = Postvote.query.filter_by(post_id=self.id).filter_by(vote = True).count()
+        downvotes = Postvote.query.filter_by(post_id=self.id).filter_by(vote = False).count() 
         return upvotes - downvotes 
-    
-    def numdownvotes(self):
-        post = Post.query.filter_by(id=self.id).first()
-        num = Postvote.query.filter_by(post_id=self.id and Postvote.vote == False).count()
-        return num
-
- 
+      
 class Postvote(db.Model):
     __tablename__='postvotes'
     id = db.Column(db.Integer, primary_key=True)

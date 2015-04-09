@@ -289,27 +289,32 @@ def downvoteitem(id):
 @login_required
 def upvotepost():
     if request.method == "POST":  
-        postvote = Postvote.query.filter_by(user_id= request.json['user_id']).filter_by(post_id = request.json['post_id']).first()
+        post = Post.query.filter_by(id = request.json['post_id']).first()
+        postvote = Postvote.query.filter_by(post_id = request.json['post_id']).filter_by(user_id= request.json['user_id']).first()
         if postvote:
             db.session.delete(postvote)
             db.session.commit()
+            return redirect(url_for('item',id=request.json['item_id']))
         else:
             newpostvote = Postvote(request.json['user_id'], request.json['post_id'], request.json['vote'])
             db.session.add(newpostvote)
             db.session.commit()
-    return redirect(url_for('item',id=request.json['item_id']))
+            return redirect(url_for('item',id=request.json['item_id']))
 
 @tzundoku.route('/downvotepost', methods=["POST"])
 @login_required
 def downvotepost():
     if request.method == "POST":  
-        postvote = Postvote.query.filter_by(user_id= request.json['user_id']).filter_by(post_id = request.json['post_id']).first()
+        postvote = Postvote.query.filter_by(post_id = request.json['post_id']).filter_by(user_id= request.json['user_id']).first()
         if postvote:
             db.session.delete(postvote)
             db.session.commit()
+            return redirect(url_for('item',id=request.json['item_id']))
         else:
             newpostvote = Postvote(request.json['user_id'], request.json['post_id'], request.json['vote'])
             db.session.add(newpostvote)
             db.session.commit()
-    return redirect(url_for('item',id=request.json['item_id']))
+            return redirect(url_for('item',id=request.json['item_id']))
+
+
 

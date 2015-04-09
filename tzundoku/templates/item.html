@@ -2,29 +2,6 @@
 {% block title %}{{ header }}{% endblock %}
 {% block content %}
 
-<div class="contentwrapper">
-    <h1>{{ item.title }}</h1>
-<div class="details">
-<p> This item appears on:
-    {% for a in item.dokus %}
-    <a href="./doku?id={{ a.id }}">{{ a.title }}</a>
-    {% endfor %}
-</p> 
-<p> The wikipedia link can be found: <a href="{{ item.link }}">here</a>.</p>
-<p> To buy this item: go <a href="{{ item.link }}">here</a>
-</div> 
-<div class="postlist">
-{% for a in item.posts %}
-    <div class="post">
-    <b><a href="/user/{{ a.user_id }}">{{ a.users.username|capitalize }}</a>: </b>{{ a.message }}, {{ a.numvotes() }}
-    {% if current_user.is_authenticated() and current_user.is_admin() or current_user.id == a.user_id %}
-    <a href="/removepost/{{ a.id }}">(Delete)</a>  
-    {% endif %}
-    {% if current_user.is_authenticated() %} 
-    <button type="button" id="upvotebutton" data-button='{"vote": true, "post_id": {{ a.id }}}'>(Upvote)</button>
-    <button type="button" id="downvotebutton" data-button='{"vote": false, "post_id": {{ a.id }}}'>(Downvote)</button>
-    {% endif %} 
-    </div>
 <script>
 $(document).ready(function(){
     $("#upvotebutton").click(function(){
@@ -51,6 +28,7 @@ $(document).ready(function(){
         }
     })
     }); 
+
     $("#downvotebutton").click(function(){
     console.log("Javascript Working"); 
     var data = $.parseJSON($(this).attr('data-button')); 
@@ -77,6 +55,30 @@ $(document).ready(function(){
     }); 
 })
 </script>
+
+<div class="contentwrapper">
+    <h1>{{ item.title }}</h1>
+<div class="details">
+<p> This item appears on:
+    {% for a in item.dokus %}
+    <a href="./doku?id={{ a.id }}">{{ a.title }}</a>
+    {% endfor %}
+</p> 
+<p> The wikipedia link can be found: <a href="{{ item.link }}">here</a>.</p>
+<p> To buy this item: go <a href="{{ item.link }}">here</a>
+</div> 
+<div class="postlist">
+{% for a in item.posts %}
+    <div class="post">
+    <b><a href="/user/{{ a.user_id }}">{{ a.users.username|capitalize }}</a>: </b>{{ a.message }}, {{ a.numvotes() }}
+    {% if current_user.is_authenticated() and current_user.is_admin() or current_user.id == a.user_id %}
+    <a href="/removepost/{{ a.id }}">(Delete)</a>  
+    {% endif %}
+    {% if current_user.is_authenticated() %} 
+    <button type="button" id="upvotebutton" data-button='{"vote": true, "post_id": {{ a.id }}}'>(Upvote)</button>
+    <button type="button" id="downvotebutton" data-button='{"vote": false, "post_id": {{ a.id }}}'>(Downvote)</button>
+    {% endif %} 
+    </div>
 {% endfor %}
 </div>
 </br>
