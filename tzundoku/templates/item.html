@@ -3,15 +3,18 @@
 {% block content %}
 
 <div class="contentwrapper">
-    <h1>{{ header }}</h1>
+    <h1>{{ item.title }}</h1>
 <div class="details">
-<p> This item appears on: Music, Hip Hop, Japanese Hip Hop, Killer Mike Albums </p>
-<p> The wikipedia link can be found: <a>here</a>.</p>
-<p> To buy this item: go <a>here</a>
-
+<p> This item appears on:
+    {% for a in item.dokus %}
+    <a href="./doku?id={{ a.id }}">{{ a.title }}</a>
+    {% endfor %}
+</p> 
+<p> The wikipedia link can be found: <a href="{{ item.link }}">here</a>.</p>
+<p> To buy this item: go <a href="{{ item.link }}">here</a>
 </div> 
 <div class="postlist">
-{% for a in posts %}
+{% for a in item.posts %}
     <div class="post">
     <b><a href="/user/{{ a.user_id }}">{{ a.users.username|capitalize }}</a>: </b>{{ a.message }}, {{ a.numupvotes() }}, {{ a.numdownvotes() }}
     {% if current_user.is_authenticated() and current_user.is_admin() or current_user.id == a.user_id %}
@@ -26,14 +29,39 @@
 $(document).ready(function(){
     $("#upvotebutton").click(function(){
     console.log("Javascript Working"); 
-    var upvote = true;
+    var vote = true;
     var post_id = "{{ a.id }}";
     var user_id = "{{ a.user_id }}";
+    var item_id = "{{ item.id }}";
 
     var nud = {
-        "upvote" : upvote,
+        "vote" : vote,
         "post_id" : post_id,
-        "user_id" : user_id
+        "user_id" : user_id,
+        "item_id" : item_id
+    }
+    $.ajax({
+        type: "POST",
+        url: "/upvotepost",
+        data: JSON.stringify(nud, null, '\t'),
+        contentType: 'application/json;charset=UTF-8',
+        success: function(result) {
+            console.log(result);
+        }
+    })
+    });
+    $("#downvotebutton").click(function(){
+    console.log("Javascript Working"); 
+    var vote = false;
+    var post_id = "{{ a.id }}";
+    var user_id = "{{ a.user_id }}";
+    var item_id = "{{ item.id }}";
+
+    var nud = {
+        "vote" : vote,
+        "post_id" : post_id,
+        "user_id" : user_id,
+        "item_id" : item_id
     }
     $.ajax({
         type: "POST",

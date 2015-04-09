@@ -73,9 +73,9 @@ doku_item = db.Table('doku_item',
 )
 
 parents = db.Table('parents',
-    db.Column('child_id', db.Integer, db.ForeignKey('dokus.id')),
-    db.Column('parent_id', db.Integer, db.ForeignKey('dokus.id'))
-)
+    db.Column('parent_id', db.Integer, db.ForeignKey('dokus.id')),
+    db.Column('child_id', db.Integer, db.ForeignKey('dokus.id'))
+    )
     
 class Doku(db.Model):
     __tablename__ = 'dokus'
@@ -84,7 +84,7 @@ class Doku(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
     timestamp =  db.Column(db.DateTime, default=datetime.datetime.utcnow)
     items = db.relationship('Item', secondary=doku_item, backref=db.backref('dokus'))
-    children = db.relationship('Doku', secondary=parents, primaryjoin="Doku.id == parents.c.child_id", secondaryjoin="Doku.id == parents.c.parent_id", backref=db.backref('parents'))
+    children = db.relationship('Doku', secondary=parents, primaryjoin="Doku.id == parents.c.parent_id", secondaryjoin="Doku.id == parents.c.child_id", backref=db.backref('parents'))
 
     def __init__(self, title, user_id=None, timestamp=None):
         self.title = title
@@ -197,8 +197,8 @@ class Postvote(db.Model):
     post_id = db.Column(db.Integer, db.ForeignKey('posts.id'))     
     vote = db.Column(db.Boolean) #True is upvote, False is downvote
     
-    def __init__(self, user_id , item_id , vote):
+    def __init__(self, user_id , post_id,  vote):
         self.user_id = user_id 
-        self.item_id = item_id
+        self.post_id = post_id 
         self.vote = vote
     

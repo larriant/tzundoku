@@ -4,9 +4,34 @@
 
 <div class="contentwrapper">
     <h1>{{ header }} Doku</h1>
+    <div class="doku_details">
+    <p> 
+    This doku is a parent to:
+    {% for a in doku.children%} 
+    {% if a == doku %}
+    {{ continue }}
+    {% else %}
+    <a href="./doku?id={{ a.id }}">{{ a.title }}</a>
+    {% endif %}
+    {% endfor %}
+    </p>  
 
-{% for a in items %} 
-    <div class="item">
+    <p> 
+    This doku is a child of:
+    {% for a in doku.parents %} 
+    {% if a == doku %}
+    {{ continue }}
+    {% else %}
+    <a href="./doku?id={{ a.id }}">{{ a.title }}</a>, 
+    {% endif %}
+    {% endfor %}
+    </p>
+    </div>
+
+<div class= "mainitems">
+<h2>Main Items</h2>
+{% for a in doku.items %} 
+    <div class="items">
     <a href="./item?id={{ a.id }}">{{ a.title }}</a>, {{ a.artist }}, {{ a.year }}
     {% if current_user.is_authenticated() and current_user.is_admin() %}
     <a href="/removeitem/{{ a.id }}/ {{ doku.id }}">(Delete)</a>
@@ -17,32 +42,7 @@
     </div>
     {% endif %}
 {% endfor %}
-
-{% for b in items2 %}
-    <div class="subdoku"> 
-    <h2>Sub Doku Title</h2>
-    {% for c in b %}
-    <a href="./item?id={{ c.id }}">{{ c.title }}</a>, {{ c.artist }}, {{ c.year }}
-    {% if current_user.is_authenticated() and current_user.is_admin() %}
-    <a href="/removeitem/{{ c.id }}/ {{ doku.id }}">(Delete)</a>
-    {% endif %}
-    {% if current_user.is_authenticated() %} 
-    <a href="/upvoteitem/{{ c.id }}">(Upvote)</a>
-    <a href="/downvoteitem/{{ c.id }}">(Downvote)</a>
-    {% endif %}
-    {% endfor %}
-    </div>
-{% endfor %}
-</br>
-
-{% with messages = get_flashed_messages() %}
-      {% if messages %}
-        {% for message in messages %}
-            {{ message }}
-        {% endfor %}
-      {% endif %}
-    {% endwith %}
-
+</div>
 
 {% if current_user.is_authenticated() == False %}
 <div class="notlogged">
@@ -61,7 +61,6 @@
 {{ form.link(class_='form-control', placeholder="Link") }}
 {{ form.submit(class_='btn btn-lg btn-primary btn-block') }}
 
-</div>
   
 {% for message in form.title.errors %}
     <div class="flash">{{ message }}</div>
@@ -80,4 +79,37 @@
 {% endfor %}
 </form>
 {% endif %}
+
+
+
+{% for a in doku.children%} 
+    {% if a == doku %}
+    {{ continue }}
+    {% else %}
+    <div class="subdoku"> 
+    <h2><a href="./doku?id={{ a.id}}">{{ a.title }}</a></h2>
+    {% for c in a.items %}
+    <div class="items">
+    <a href="./item?id={{ c.id }}">{{ c.title }}</a>, {{ c.artist }}, {{ c.year }}
+    {% if current_user.is_authenticated() and current_user.is_admin() %}
+    <a href="/removeitem/{{ c.id }}/ {{ doku.id }}">(Delete)</a>
+    {% endif %}
+    {% if current_user.is_authenticated() %} 
+    <a href="/upvoteitem/{{ c.id }}">(Upvote)</a>
+    <a href="/downvoteitem/{{ c.id }}">(Downvote)</a>
+    {% endif %}
+    </div>
+    {% endfor %}
+    {% endif %}
+{% endfor %}
+    </div>
+
+{% with messages = get_flashed_messages() %}
+      {% if messages %}
+        {% for message in messages %}
+            {{ message }}
+        {% endfor %}
+      {% endif %}
+    {% endwith %}
+</div>
 {% endblock %}

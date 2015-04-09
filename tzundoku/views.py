@@ -2,7 +2,7 @@ from flask import render_template, request, redirect, url_for, flash, session, j
 from flask.ext.login import login_user, logout_user, current_user, login_required
 from tzundoku import tzundoku, db, lm
 from .forms import LoginForm, RegistrationForm, AddDokuForm, AddItemForm, AddPostForm
-from .models import User, Doku, Item, Post
+from .models import User, Doku, Item, Post, Postvote
 
 import datetime
 import legal
@@ -83,35 +83,34 @@ def overview():
             return render_template('overview.html', titles=titles, form=form)
         else:
             doku_exists = Doku.query.filter_by(title=form.title.data).first()
-            if doku_exists:
+            if doku_exists: #doku already eixsts
                 newparent = Doku.query.filter_by(title=form.parent.data).first()
                 if newparent == None:
-                    doku_exists.parents.append(doku_exists)
+                    doku_exists.children.append(doku_exists)
                     db.session.add(doku_exists)
                     db.session.commit() 
                     flash('This doku already exists, you have added itself as a parent') 
                     return redirect(url_for('overview'))
                 else: 
-                    doku_with_parent = Doku(form.title.data, user.id, datetime.datetime.utcnow())
-                    newparent.parents.append(doku_with_parent)
+                    newparent.children.append(doku_exists)
                     db.session.add(newparent)
-                    db.session.add(doku_with_parent)
+                    db.session.add(doku_exists)
                     db.session.commit()
                     flash('This doku already exists, but you have added a parent!')
                     return redirect(url_for('overview')) 
 
-            else: #doku already exists
+            else: #dok does not yet exist 
                 newparent = Doku.query.filter_by(title=form.parent.data).first()
                 if newparent == None:
                     doku_no_parent = Doku(form.title.data, user.id, datetime.datetime.utcnow())
-                    doku_no_parent.parents.append(doku_no_parent)
+                    doku_no_parent.children.append(doku_no_parent)
                     db.session.add(doku_no_parent)
                     db.session.commit()
                     flash('You have created a new Doku, with itself as as parent')
                     return redirect(url_for('overview')) 
                 else: 
                     doku_with_parent = Doku(form.title.data, user.id, datetime.datetime.utcnow())
-                    newparent.parents.append(doku_with_parent)
+                    newparent.children.append(doku_with_parent)
                     db.session.add(newparent)
                     db.session.add(doku_with_parent)
                     db.session.commit()
@@ -204,13 +203,10 @@ def item():
     form = AddPostForm()
     itemid = request.args['id']
     item = Item.query.filter_by(id = itemid).first()
-    header = item.title
-    posts = Post.query.filter_by(item_id = itemid)
-
 
     if request.method == 'POST':
         if form.validate() == False:
-            return render_template('item.html', header=header, posts=posts, form=form)
+            return render_template('item.html', item=item, form=form)
         else:
             post = Post(user.id, form.message.data, datetime.datetime.utcnow(), itemid)
             db.session.add(post)
@@ -219,7 +215,7 @@ def item():
             return redirect(url_for('item', id=itemid)) 
 
     elif request.method == 'GET':
-        return render_template('item.html', header=header, posts=posts, form=form)
+        return render_template('item.html', item=item, form=form)
     
 @tzundoku.route('/makemoderator/<id>')
 def makemoderator(id):
@@ -292,9 +288,15 @@ def downvoteitem(id):
 @tzundoku.route('/upvotepost', methods=["POST"])
 def upvotepost():
     if request.method == "POST":  
-        postvote = Postvote(request.json['user_id'], request.json['post_id'], request.json['vote'])
-        session.add(postvote)
-        session.commit()
+        postvote = Postvote.query.filter_by(user_id= request.json['user_id']).filter_by(post_id = request.json['post_id']).first()
+        if postvote:
+            flash('You have already voted on this item')
+
+        else:
+            newpostvote = Postvote(request.json['user_id'], request.json['post_id'], request.json['vote'])
+            db.session.add(newpostvote)
+            db.session.commit()
+    return redirect(url_for('item',id=request.json['item_id']))
 
 @tzundoku.route('/downvotepost/<id>')
 @login_required
