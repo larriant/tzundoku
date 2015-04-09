@@ -179,10 +179,10 @@ class Post(db.Model):
         db.session.add(postvote)
         db.session.commit()        
 
-    def numupvotes(self):
-        post = Post.query.filter_by(id=self.id).first()
-        num = Postvote.query.filter_by(post_id=post.id and Postvote.vote == True).count()
-        return num
+    def numvotes(self):
+        upvotes = Postvote.query.filter_by(post_id=self.id and Postvote.vote == True).count()
+        downvotes = Postvote.query.filter_by(post_id=self.id and Postvote.vote == False).count() 
+        return upvotes - downvotes 
     
     def numdownvotes(self):
         post = Post.query.filter_by(id=self.id).first()

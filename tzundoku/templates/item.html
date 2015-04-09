@@ -16,22 +16,23 @@
 <div class="postlist">
 {% for a in item.posts %}
     <div class="post">
-    <b><a href="/user/{{ a.user_id }}">{{ a.users.username|capitalize }}</a>: </b>{{ a.message }}, {{ a.numupvotes() }}, {{ a.numdownvotes() }}
+    <b><a href="/user/{{ a.user_id }}">{{ a.users.username|capitalize }}</a>: </b>{{ a.message }}, {{ a.numvotes() }}
     {% if current_user.is_authenticated() and current_user.is_admin() or current_user.id == a.user_id %}
     <a href="/removepost/{{ a.id }}">(Delete)</a>  
     {% endif %}
     {% if current_user.is_authenticated() %} 
-    <button id="upvotebutton" type="button">(Upvote)</button>
-    <button id="downvotebutton" type="button">(Downvote)</button>
+    <button type="button" id="upvotebutton" data-button='{"vote": true, "post_id": {{ a.id }}}'>(Upvote)</button>
+    <button type="button" id="downvotebutton" data-button='{"vote": false, "post_id": {{ a.id }}}'>(Downvote)</button>
     {% endif %} 
     </div>
 <script>
 $(document).ready(function(){
     $("#upvotebutton").click(function(){
     console.log("Javascript Working"); 
-    var vote = true;
-    var post_id = "{{ a.id }}";
-    var user_id = "{{ a.user_id }}";
+    var data = $.parseJSON($(this).attr('data-button')); 
+    var vote = data.vote 
+    var post_id = data.post_id 
+    var user_id = "{{ current_user.id }}";
     var item_id = "{{ item.id }}";
 
     var nud = {
@@ -49,12 +50,13 @@ $(document).ready(function(){
             console.log(result);
         }
     })
-    });
+    }); 
     $("#downvotebutton").click(function(){
     console.log("Javascript Working"); 
-    var vote = false;
-    var post_id = "{{ a.id }}";
-    var user_id = "{{ a.user_id }}";
+    var data = $.parseJSON($(this).attr('data-button')); 
+    var vote = data.vote 
+    var post_id = data.post_id 
+    var user_id = "{{ current_user.id }}";
     var item_id = "{{ item.id }}";
 
     var nud = {
@@ -65,14 +67,14 @@ $(document).ready(function(){
     }
     $.ajax({
         type: "POST",
-        url: "/upvotepost",
+        url: "/downvotepost",
         data: JSON.stringify(nud, null, '\t'),
         contentType: 'application/json;charset=UTF-8',
         success: function(result) {
             console.log(result);
         }
     })
-    });
+    }); 
 })
 </script>
 {% endfor %}
@@ -88,7 +90,7 @@ $(document).ready(function(){
 
 {% if current_user.is_authenticated() == False %}
 <div class="notlogged">
-<p><a href="/login">Login</a> or <a href="/register">Register</a> to post to this Item!</p>
+<p><a href="/login">Login</a> or <a href="/register">Register</a> to post and vote!</p>
 </div>
 {% endif %}
 

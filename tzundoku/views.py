@@ -59,9 +59,8 @@ def logout():
 @tzundoku.route("/overview", methods=['GET', 'POST'])
 def overview():
     form = AddDokuForm()
-    user = User.query.filter_by(id = current_user.id).first()
-
     titles = []
+
     elderdoku = Doku.query.filter_by(title="Music").first()
     titles.append(elderdoku)
     if elderdoku:
@@ -79,6 +78,7 @@ def overview():
                     titles.append(c)
      
     if request.method == 'POST':
+        user = User.query.filter_by(id = current_user.id).first()
         if form.validate() == False:
             return render_template('overview.html', titles=titles, form=form)
         else:
@@ -158,7 +158,6 @@ def privacy():
 
 @tzundoku.route('/doku', methods=['GET', 'POST'])
 def doku():
-    user = User.query.filter_by(id = current_user.id).first()
     form = AddItemForm()
     dokuid = request.args['id']
     doku = Doku.query.filter_by(id = dokuid).first()
@@ -172,6 +171,7 @@ def doku():
             items2.append(Item.query.filter(Item.dokus.any(id= a.id)).all())
 
     if request.method == 'POST':
+        user = User.query.filter_by(id = current_user.id).first()
         if form.validate() == False:
             return render_template('doku.html', header=header, items=items, items2=items2, form=form, doku=doku)
         else:
@@ -198,13 +198,13 @@ def doku():
 
 
 @tzundoku.route('/item', methods=['GET', 'POST'])
-def item():
-    user = User.query.filter_by(id = current_user.id).first()
+def item(): 
     form = AddPostForm()
     itemid = request.args['id']
     item = Item.query.filter_by(id = itemid).first()
 
     if request.method == 'POST':
+        user = User.query.filter_by(id = current_user.id).first() 
         if form.validate() == False:
             return render_template('item.html', item=item, form=form)
         else:
@@ -286,26 +286,30 @@ def downvoteitem(id):
     return redirect(url_for('doku', id=doku_id))
 
 @tzundoku.route('/upvotepost', methods=["POST"])
+@login_required
 def upvotepost():
     if request.method == "POST":  
         postvote = Postvote.query.filter_by(user_id= request.json['user_id']).filter_by(post_id = request.json['post_id']).first()
         if postvote:
-            flash('You have already voted on this item')
-
+            db.session.delete(postvote)
+            db.session.commit()
         else:
             newpostvote = Postvote(request.json['user_id'], request.json['post_id'], request.json['vote'])
             db.session.add(newpostvote)
             db.session.commit()
     return redirect(url_for('item',id=request.json['item_id']))
 
-@tzundoku.route('/downvotepost/<id>')
+@tzundoku.route('/downvotepost', methods=["POST"])
 @login_required
-def downvotepost(id):
-    post = Post.query.filter_by(id=id).first()
-    post.downvotepost()
-    flash('You have downvoted this post')
-    item = Item.query.filter_by(id=post.item_id).first()
-    item_id = item.id
-    return redirect(url_for('item', id=item_id))
-
+def downvotepost():
+    if request.method == "POST":  
+        postvote = Postvote.query.filter_by(user_id= request.json['user_id']).filter_by(post_id = request.json['post_id']).first()
+        if postvote:
+            db.session.delete(postvote)
+            db.session.commit()
+        else:
+            newpostvote = Postvote(request.json['user_id'], request.json['post_id'], request.json['vote'])
+            db.session.add(newpostvote)
+            db.session.commit()
+    return redirect(url_for('item',id=request.json['item_id']))
 
