@@ -61,22 +61,19 @@ def overview():
     form = AddDokuForm()
     titles = []
 
-    elderdoku = Doku.query.filter_by(title="Music").first()
-    titles.append(elderdoku)
-    if elderdoku:
-        for a in elderdoku.children:
-            if a.id == elderdoku.id:
-                continue  
-            titles.append(a)
-            for b in a.children:
-                if b.id == elderdoku.id:
-                    continue 
-                titles.append(b) 
-                for c in b.children:
-                    if c.id == elderdoku.id:
-                        continue 
-                    titles.append(c)
-     
+    alldokus = Doku.query.all()
+    parentlessdokus = []
+    for a in alldokus:
+        if a.parents:
+            parentlessdokus.append(a)
+    
+    for a in parentlessdokus:      
+        titles.append(a)
+        for b in a.children:
+            titles.append(b)
+            for c in b.children:
+                titles.append(c)       
+
     if request.method == 'POST':
         user = User.query.filter_by(id = current_user.id).first()
         if form.validate() == False:
@@ -85,11 +82,8 @@ def overview():
             doku_exists = Doku.query.filter_by(title=form.title.data).first()
             if doku_exists: #doku already eixsts
                 newparent = Doku.query.filter_by(title=form.parent.data).first()
-                if newparent == None:
-                    doku_exists.children.append(doku_exists)
-                    db.session.add(doku_exists)
-                    db.session.commit() 
-                    flash('This doku already exists, you have added itself as a parent') 
+                if newparent == None: 
+                    flash('This doku already exists') 
                     return redirect(url_for('overview'))
                 else: 
                     newparent.children.append(doku_exists)
@@ -103,10 +97,9 @@ def overview():
                 newparent = Doku.query.filter_by(title=form.parent.data).first()
                 if newparent == None:
                     doku_no_parent = Doku(form.title.data, user.id, datetime.datetime.utcnow())
-                    doku_no_parent.children.append(doku_no_parent)
                     db.session.add(doku_no_parent)
                     db.session.commit()
-                    flash('You have created a new Doku, with itself as as parent')
+                    flash('You have created a new Doku, with no parent!')
                     return redirect(url_for('overview')) 
                 else: 
                     doku_with_parent = Doku(form.title.data, user.id, datetime.datetime.utcnow())
