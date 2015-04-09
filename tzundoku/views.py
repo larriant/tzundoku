@@ -294,12 +294,12 @@ def upvotepost():
         if postvote:
             db.session.delete(postvote)
             db.session.commit()
-            return redirect(url_for('item',id=request.json['item_id']))
         else:
             newpostvote = Postvote(request.json['user_id'], request.json['post_id'], request.json['vote'])
             db.session.add(newpostvote)
             db.session.commit()
-            return redirect(url_for('item',id=request.json['item_id']))
+        votes = post.numvotes()
+        return redirect(url_for('item',id=request.json['item_id'], votes=votes))
 
 @tzundoku.route('/downvotepost', methods=["POST"])
 @login_required
