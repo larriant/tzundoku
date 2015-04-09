@@ -16,6 +16,8 @@ class User(db.Model):
     items = db.relationship('Item', backref='users')
     dokus = db.relationship('Doku', backref='users')
     postvotes = db.relationship('Postvote', backref='users')
+    itemvotes = db.relationship('Itemvote', backref='users')
+    dokuvotes = db.relationship('Dokuvote', backref='users')
 
     def __init__(self, username, email, password):
         self.username = username
@@ -85,6 +87,8 @@ class Doku(db.Model):
     timestamp =  db.Column(db.DateTime, default=datetime.datetime.utcnow)
     items = db.relationship('Item', secondary=doku_item, backref=db.backref('dokus'))
     children = db.relationship('Doku', secondary=parents, primaryjoin="Doku.id == parents.c.parent_id", secondaryjoin="Doku.id == parents.c.child_id", backref=db.backref('parents'))
+    itemvotes = db.relationship('Itemvote', backref='dokus')
+    dokuvotes = db.relationship('Dokuvote', backref='dokus')
 
     def __init__(self, title, user_id=None, timestamp=None):
         self.title = title
@@ -113,6 +117,8 @@ class Item(db.Model):
     timestamp = db.Column(db.DateTime)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
     posts = db.relationship('Post', backref='items')
+    itemvotes = db.relationship('Itemvote', backref='items')
+
 
     def __repr__(self):
         return '<Item %r>' % (self.title)
@@ -184,4 +190,31 @@ class Postvote(db.Model):
         self.user_id = user_id 
         self.post_id = post_id 
         self.vote = vote
+
+class Itemvote(db.Model):
+    __tablename__='itemvotes'
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+    item_id = db.Column(db.Integer, db.ForeignKey('items.id'))
+    doku_id = db.Column(db.Integer, db.ForeignKey('dokus.id'))
+    vote = db.Column(db.Boolean) #True is upvote, False is downvote
+
+    def __init__(self, user_id, item_id, doku_id):
+        self.user_id = user_id
+        self.item_id = item_id
+        self.doku_id = doku_id
+        self.vote = vote 
+
+class Dokuvote(db.Model):
+    __tablename__='dokuvotes'
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+    doku_id = db.Column(db.Integer, db.ForeignKey('dokus.id'))     
+    vote = db.Column(db.Boolean) #True is upvote, False is downvote
     
+    def __init__(self, user_id , doku_id,  vote):
+        self.user_id = user_id 
+        self.doku_id = doku_id 
+        self.vote = vote
+
+
