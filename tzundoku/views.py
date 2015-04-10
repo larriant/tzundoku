@@ -1,4 +1,4 @@
-from flask import render_template, request, redirect, url_for, flash, session, json
+from flask import render_template, request, redirect, url_for, flash, session, json, jsonify
 from flask.ext.login import login_user, logout_user, current_user, login_required
 from tzundoku import tzundoku, db, lm
 from .forms import LoginForm, RegistrationForm, AddDokuForm, AddItemForm, AddPostForm
@@ -285,29 +285,41 @@ def upvotepost():
         post = Post.query.filter_by(id = request.json['post_id']).first()
         postvote = Postvote.query.filter_by(post_id = request.json['post_id']).filter_by(user_id= request.json['user_id']).first()
         if postvote:
-            db.session.delete(postvote)
-            db.session.commit()
+            if postvote.vote == True:
+                db.session.delete(postvote)
+                db.session.commit()
+            elif postvote.vote == False:
+                db.session.delete(postvote)
+                newpostvote = Postvote(request.json['user_id'], request.json['post_id'], request.json['vote'])
+                db.session.add(newpostvote)
+                db.session.commit()
         else:
             newpostvote = Postvote(request.json['user_id'], request.json['post_id'], request.json['vote'])
             db.session.add(newpostvote)
             db.session.commit()
         votes = post.numvotes()
-        return redirect(url_for('item',id=request.json['item_id'], votes=votes))
+        return jsonify({'numvotes': votes, 'post_id': post.id})
 
 @tzundoku.route('/downvotepost', methods=["POST"])
 @login_required
 def downvotepost():
     if request.method == "POST":  
+        post = Post.query.filter_by(id = request.json['post_id']).first()
         postvote = Postvote.query.filter_by(post_id = request.json['post_id']).filter_by(user_id= request.json['user_id']).first()
         if postvote:
-            db.session.delete(postvote)
-            db.session.commit()
-            return redirect(url_for('item',id=request.json['item_id']))
+            if postvote.vote == False:
+                db.session.delete(postvote)
+                db.session.commit()
+            elif postvote.vote == True:
+                db.session.delete(postvote)
+                newpostvote = Postvote(request.json['user_id'], request.json['post_id'], request.json['vote'])
+                db.session.add(newpostvote)
+                db.session.commit()
         else:
             newpostvote = Postvote(request.json['user_id'], request.json['post_id'], request.json['vote'])
             db.session.add(newpostvote)
             db.session.commit()
-            return redirect(url_for('item',id=request.json['item_id']))
-
+        votes = post.numvotes()
+        return jsonify({'numvotes': votes, 'post_id': post.id})
 
 

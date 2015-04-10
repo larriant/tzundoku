@@ -5,20 +5,21 @@
 
 
 <div class="contentwrapper">
+    <div class="details">
     <h1>{{ item.title }}</h1>
-<div class="details">
+
 <p> This item appears on:
     {% for a in item.dokus %}
     <a href="./doku?id={{ a.id }}">{{ a.title }}</a>
     {% endfor %}
 </p> 
 <p> The wikipedia link can be found: <a href="{{ item.link }}">here</a>.</p>
-<p> To buy this item: go <a href="{{ item.link }}">here</a>
 </div> 
+
 <div class="postlist">
 {% for a in item.posts %}
     <div class="post">
-    <b><a href="/user/{{ a.user_id }}">{{ a.users.username|capitalize }}</a>: </b>{{ a.message }}, {{ a.numvotes() }}
+    <b><a href="/user/{{ a.user_id }}">{{ a.users.username|capitalize }}</a>: </b>{{ a.message }},<span id="votes{{ a.id }}">{{ a.numvotes() }}</span>
     {% if current_user.is_authenticated() and current_user.is_admin() or current_user.id == a.user_id %}
     <a href="/removepost/{{ a.id }}">(Delete)</a>  
     {% endif %}
@@ -30,7 +31,6 @@
     <script>
 $(document).ready(function(){
     $("#upvotebutton{{ a.id }}").click(function(){
-    console.log("Javascript Working"); 
     var data = $.parseJSON($(this).attr('data-button')); 
     var vote = data.vote 
     var post_id = data.post_id 
@@ -50,12 +50,14 @@ $(document).ready(function(){
         contentType: 'application/json;charset=UTF-8',
         success: function(result) {
             console.log(result);
+            var post_id = result['post_id']
+            var numvotes = result['numvotes'] 
+            $('#votes'+ post_id).text(numvotes) 
         }
     })
     }); 
 
     $("#downvotebutton{{ a.id }}").click(function(){
-    console.log("Javascript Working"); 
     var data = $.parseJSON($(this).attr('data-button')); 
     var vote = data.vote 
     var post_id = data.post_id 
@@ -75,6 +77,9 @@ $(document).ready(function(){
         contentType: 'application/json;charset=UTF-8',
         success: function(result) {
             console.log(result);
+            var post_id = result['post_id']
+            var numvotes = result['numvotes'] 
+            $('#votes'+ post_id).text(numvotes) 
         }
     })
     }); 
