@@ -32,15 +32,73 @@
 <h2>Main Items</h2>
 {% for a in doku.items %} 
     <div class="items">
-    <a href="./item?id={{ a.id }}">{{ a.title }}</a>, {{ a.artist }}, {{ a.year }}
+    <a href="./item?id={{ a.id }}">{{ a.title }}</a>, {{ a.artist }}, {{ a.year }}, <span id="votes{{ a.id }}">{{ a.numvotes(doku.id) }}</span>
     {% if current_user.is_authenticated() and current_user.is_admin() %}
     <a href="/removeitem/{{ a.id }}/ {{ doku.id }}">(Delete)</a>
     {% endif %}
     {% if current_user.is_authenticated() %} 
-    <a href="/upvoteitem/{{ a.id }}">(Upvote)</a>
-    <a href="/downvoteitem/{{ a.id }}">(Downvote)</a>
+    <button type="button" id="upvotebutton{{ a.id }}" data-button='{"vote": true, "item_id": {{ a.id }}}'>(Upvote)</button>
+    <button type="button" id="downvotebutton{{ a.id }}" data-button='{"vote": false, "item_id": {{ a.id }}}'>(Downvote)</button>
+    {% endif %} 
     </div>
-    {% endif %}
+    <script>
+$(document).ready(function(){
+    $("#upvotebutton{{ a.id }}").click(function(){
+    var data = $.parseJSON($(this).attr('data-button')); 
+    var vote = data.vote 
+    var item_id = data.item_id
+    var user_id = "{{ current_user.id }}";
+    var doku_id = "{{ doku.id }}";
+
+    var nud = {
+        "vote" : vote,
+        "item_id" : item_id,
+        "user_id" : user_id,
+        "doku_id" : doku_id
+    }
+    $.ajax({
+        type: "POST",
+        url: "/upvoteitem",
+        data: JSON.stringify(nud, null, '\t'),
+        contentType: 'application/json;charset=UTF-8',
+        success: function(result) {
+            console.log(result);
+            var item_id = result['item_id']
+            var numvotes = result['numvotes'] 
+            $('#votes'+ item_id).text(numvotes) 
+        }
+    })
+    }); 
+
+    $("#downvotebutton{{ a.id }}").click(function(){
+    var data = $.parseJSON($(this).attr('data-button')); 
+    var vote = data.vote 
+    var item_id = data.item_id 
+    var user_id = "{{ current_user.id }}";
+    var doku_id = "{{ doku.id }}";
+
+    var nud = {
+        "vote" : vote,
+        "item_id" : item_id,
+        "user_id" : user_id,
+        "doku_id" : doku_id
+    }
+    $.ajax({
+        type: "POST",
+        url: "/downvoteitem",
+        data: JSON.stringify(nud, null, '\t'),
+        contentType: 'application/json;charset=UTF-8',
+        success: function(result) {
+            console.log(result);
+            var item_id = result['item_id']
+            var numvotes = result['numvotes'] 
+            $('#votes'+ item_id).text(numvotes) 
+        }
+    })
+    }); 
+})
+</script>
+
 {% endfor %}
 </div>
 

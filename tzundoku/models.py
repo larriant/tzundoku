@@ -102,7 +102,7 @@ class Doku(db.Model):
         doku = Doku.query.filter_by(id = self.id).first()
         db.session.delete(doku)
         db.session.commit()
-
+    
 class Item(db.Model):
     __tablename__ = 'items'
     id = db.Column(db.Integer, primary_key = True)
@@ -131,22 +131,16 @@ class Item(db.Model):
         self.link = link
         self.user_id= user_id 
         self.timestamp = timestamp 
-
-    def upvote(self):
-        item = Item.query.filter_by(id = self.id).first()
-        Itemvote(1, self.id, True)
-        db.session.commit()
-
-    def downvote(self):
-        item = Item.query.filter_by(id = self.id).first()
-        item.downvotes += 1
-        db.session.commit()
-
-
+ 
     def delete(self):
         item = Item.query.filter_by(id = self.id).first()
         db.session.delete(item)
         db.session.commit()
+
+    def numvotes(self, doku_id):
+        upvotes = Itemvote.query.filter_by(item_id=self.id).filter_by(doku_id=doku_id).filter_by(vote = True).count()
+        downvotes = Itemvote.query.filter_by(item_id=self.id).filter_by(doku_id=doku_id).filter_by(vote = False).count() 
+        return upvotes - downvotes
 
 
 class Post(db.Model):
@@ -199,7 +193,7 @@ class Itemvote(db.Model):
     doku_id = db.Column(db.Integer, db.ForeignKey('dokus.id'))
     vote = db.Column(db.Boolean) #True is upvote, False is downvote
 
-    def __init__(self, user_id, item_id, doku_id):
+    def __init__(self, user_id, item_id, doku_id, vote):
         self.user_id = user_id
         self.item_id = item_id
         self.doku_id = doku_id

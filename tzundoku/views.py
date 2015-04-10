@@ -2,7 +2,7 @@ from flask import render_template, request, redirect, url_for, flash, session, j
 from flask.ext.login import login_user, logout_user, current_user, login_required
 from tzundoku import tzundoku, db, lm
 from .forms import LoginForm, RegistrationForm, AddDokuForm, AddItemForm, AddPostForm
-from .models import User, Doku, Item, Post, Postvote
+from .models import User, Doku, Item, Post, Postvote, Itemvote, Dokuvote
 
 import datetime
 import legal
@@ -237,10 +237,8 @@ def removeitem(id, doku_id):
     item = Item.query.filter_by(id=id).first()
     posts = Post.query.filter_by(item_id = id)
     doku = Doku.query.filter_by(id=doku_id).first()
-    #Problem!! Should remove just the doku page we are on
 
     doku_id = doku.id
-
     for post in posts:
         post.delete()
     item.delete()
@@ -249,34 +247,13 @@ def removeitem(id, doku_id):
 
 @tzundoku.route('/removepost/<id>')
 @login_required
-def delete(id):
+def removepost(id):
     post = Post.query.filter_by(id=id).first()
     item = Item.query.filter_by(id=post.item_id).first()
     item_id = item.id
     post.delete()
     flash('You have removed this post')
     return redirect(url_for('item', id=item_id))   
-
-
-@tzundoku.route('/upvoteitem/<id>')
-@login_required
-def upvoteitem(id):
-    item = Item.query.filter_by(id=id).first()
-    item.upvoteitem()
-    flash('You have upvoted this item')
-    doku = Doku.query.filter_by(id=item.doku_id).first()
-    doku_id = doku.id
-    return redirect(url_for('doku', id=doku_id))
-
-@tzundoku.route('/downvoteitem/<id>')
-@login_required
-def downvoteitem(id):
-    item = Item.query.filter_by(id=id).first()
-    item.downvoteitem()
-    flash('You have downvoted this item')
-    doku = Doku.query.filter_by(id=item.doku_id).first()
-    doku_id = doku.id
-    return redirect(url_for('doku', id=doku_id))
 
 @tzundoku.route('/upvotepost', methods=["POST"])
 @login_required
@@ -322,4 +299,47 @@ def downvotepost():
         votes = post.numvotes()
         return jsonify({'numvotes': votes, 'post_id': post.id})
 
+@tzundoku.route('/upvoteitem', methods=["POST"])
+@login_required
+def upvoteitem():
+    if request.method == "POST":  
+        item = Item.query.filter_by(id = request.json['item_id']).first()
+        itemvote = Itemvote.query.filter_by(item_id= request.json['item_id']).filter_by(user_id= request.json['user_id']).filter_by(doku_id = request.json['doku_id']).first()
+        if itemvote:
+            if itemvote.vote == True:
+                db.session.delete(itemvote)
+                db.session.commit()
+            elif itemvote.vote == False:
+                db.session.delete(itemvote)
+                newitemvote = Itemvote(request.json['user_id'], request.json['item_id'], request.json['doku_id'], request.json['vote'])
+                db.session.add(newitemvote)
+                db.session.commit()
+        else:
+            newitemvote = Itemvote(request.json['user_id'], request.json['item_id'], request.json['doku_id'], request.json['vote'])
+            db.session.add(newitemvote)
+            db.session.commit()
+        votes = item.numvotes(request.json['doku_id'])
+        return jsonify({'numvotes': votes, 'item_id': item.id})
+
+@tzundoku.route('/downvoteitem', methods=["POST"])
+@login_required
+def downvoteitem():
+    if request.method == "POST":  
+        item = Item.query.filter_by(id = request.json['item_id']).first()
+        itemvote = Itemvote.query.filter_by(item_id = request.json['item_id']).filter_by(user_id= request.json['user_id']).filter_by(doku_id = request.json['doku_id']).first()
+        if itemvote:
+            if itemvote.vote == False:
+                db.session.delete(itemvote)
+                db.session.commit()
+            elif itemvote.vote == True:
+                db.session.delete(itemvote)
+                newitemvote = Itemvote(request.json['user_id'], request.json['item_id'], request.json['doku_id'],  request.json['vote'])
+                db.session.add(newitemvote)
+                db.session.commit()
+        else:
+            newitemvote = Itemvote(request.json['user_id'], request.json['item_id'], request.json['doku_id'], request.json['vote'])
+            db.session.add(newitemvote)
+            db.session.commit()
+        votes = item.numvotes(request.json['doku_id'])
+        return jsonify({'numvotes': votes, 'item_id': item.id})
 
