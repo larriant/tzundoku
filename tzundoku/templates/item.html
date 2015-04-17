@@ -5,28 +5,35 @@
 
 
 <div class="contentwrapper">
-    <div class="details">
-    <h1>{{ item.title }}</h1>
-
-<p> This item appears on:
-    {% for a in item.dokus %}
-    <a href="./doku?id={{ a.id }}">{{ a.title }}</a>
-    {% endfor %}
-</p> 
-<p> The wikipedia link can be found: <a href="{{ item.link }}">here</a>.</p>
-</div> 
+    <div class="itemdetails">
+    	<h1>{{ item.title }}</h1>
+		<img src="{{ item.imglink }}" alt="{{ item.title }}" height="100px">
+		<div class="iteminfo">
+		<p> Appears on:  
+    	{% for a in item.dokus %}
+   		 <a href="./doku?id={{ a.id }}">{{ a.title }}</a>
+    	{% endfor %}
+		</p>
+		<a href="{{ item.link }}">Wikipedia</a></br>
+		<a href="">Buy</a>
+		</div>
+	</div> 
 
 <div class="postlist">
 {% for a in item.posts %}
     <div class="post">
-    <b><a href="/user/{{ a.user_id }}">{{ a.users.username|capitalize }}</a>: </b>{{ a.message }},<span id="votes{{ a.id }}">{{ a.numvotes() }}</span>
+	<div class="text">
+    <b><a href="/user/{{ a.user_id }}">{{ a.users.username|capitalize }}</a>(<span id="votes{{ a.id }}">{{ a.numvotes() }}</span>): </b></br>{{ a.message }}
+    </div>
+    <div class="votes">
     {% if current_user.is_authenticated() and current_user.is_admin() or current_user.id == a.user_id %}
     <a href="/removepost/{{ a.id }}">(Delete)</a>  
     {% endif %}
     {% if current_user.is_authenticated() %} 
     <button type="button" id="upvotebutton{{ a.id }}" data-button='{"vote": true, "post_id": {{ a.id }}}'>(Upvote)</button>
     <button type="button" id="downvotebutton{{ a.id }}" data-button='{"vote": false, "post_id": {{ a.id }}}'>(Downvote)</button>
-    {% endif %} 
+    {% endif %}
+	</div>
     </div>
     <script>
 $(document).ready(function(){

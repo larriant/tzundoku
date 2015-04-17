@@ -171,14 +171,8 @@ clear:both;
   }
 }
 
-/* RESPONSIVE CSS
+/* DOku
 -------------------------------------------------- */
-
-.subdoku {
-  height:300px;
-  width:700px;
-  margin-top: 50px;
-}
 
 .mainitems {
   width:700px;
@@ -189,12 +183,39 @@ clear:both;
 
 .items {
   width: 700px;
-  height: 30px;
+  height: 80px;
   border: 1px solid black;
   position: relative;
   display:block;
   margin-bottom:20px;
 
+}
+
+.items img {
+  margin-top:2px;
+  margin-left:2px;
+  margin-right:20px;
+
+}
+
+.items .voting {
+  display: block;
+  float:right;
+  height:80px;
+}
+
+.items .votes {
+font-size:30px;
+margin-top:20px;
+display:block;
+float:left;
+}
+
+.items .btn {
+  float:right;
+  display:block;
+  margin-top:20px;
+  margin-right:10px;
 }
 
 .doku_details {
@@ -203,16 +224,51 @@ position: relative;
 display:block;
 }
 
-/* Posts 
+/* Item
 -------------------------------------------------- */
+.postlist {
+  display:block;
+  position:relative;
+  overflow:auto;
 
+}
 .post {
-margin-bottom:10px;
-  height:50px;
-{
+  margin-bottom:20px;
+  height:auto;
+  display:block;
+  position:relative;
+  overflow:auto;
+}
+
+.post .text {
+  float:left;
+  max-width:450px;
+  display:block;
+}
+
+.post .votes {
+  display: block;
+  float:right;
+}
 
 .notlogged {
   width:200px;
   margin:50px auto;
+}
+
+.itemdetails {
+  margin-bottom:200px;
+}
+
+.iteminfo {
+  float:right;
+  display:block;
+  margin-right:200px;
+  margin-top:20px;
+}
+
+.itemdetails img {
+  float:left;
+  margin-left:200px;
 }
 

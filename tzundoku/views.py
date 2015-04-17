@@ -56,6 +56,44 @@ def logout():
     logout_user() 
     return redirect(url_for('index')) 
 
+@tzundoku.route('/profile')
+@login_required
+def profile():
+    user = User.query.filter_by(email= session['email']).first()  
+    username = user.username
+    return render_template('profile.html', username=username)
+
+@tzundoku.route('/user/<id>')
+def user(id):
+    user = User.query.filter_by(id=id).first()
+    if user == None:
+        flash('User not found.')
+        return redirect(url_for('overview'))
+    posts = Post.query.filter_by(user_id =id)
+    return render_template('user.html',
+                           user=user,
+                           posts=posts)
+
+@tzundoku.route('/testdb')
+def testdb():
+    if db.session.query("1").from_statement("SELECT 1").all():
+        return 'It Works.'
+    else:
+        return 'Something is broken'
+
+@tzundoku.route('/terms')
+def terms():
+    return render_template('legal.html',
+                           title="Terms and Conditions",
+                           content=legal.terms)
+@tzundoku.route('/privacy')
+def privacy():
+    return render_template('legal.html',
+                           title="Privacy Policy",
+                           content=legal.privacy)
+
+
+
 @tzundoku.route("/overview", methods=['GET', 'POST'])
 def overview():
     form = AddDokuForm()
@@ -63,16 +101,8 @@ def overview():
 
     alldokus = Doku.query.all()
     parentlessdokus = []
-    for a in alldokus:
-        if a.parents:
-            parentlessdokus.append(a)
-    
-    for a in parentlessdokus:      
+    for a in alldokus: 
         titles.append(a)
-        for b in a.children:
-            titles.append(b)
-            for c in b.children:
-                titles.append(c)       
 
     if request.method == 'POST':
         user = User.query.filter_by(id = current_user.id).first()
@@ -113,47 +143,12 @@ def overview():
     elif request.method == 'GET':
         return render_template('overview.html', titles=titles, form=form)  
 
-@tzundoku.route('/profile')
-@login_required
-def profile():
-    user = User.query.filter_by(email= session['email']).first()  
-    username = user.username
-    return render_template('profile.html', username=username)
-
-@tzundoku.route('/user/<id>')
-def user(id):
-    user = User.query.filter_by(id=id).first()
-    if user == None:
-        flash('User not found.')
-        return redirect(url_for('overview'))
-    posts = Post.query.filter_by(user_id =id)
-    return render_template('user.html',
-                           user=user,
-                           posts=posts)
-
-@tzundoku.route('/testdb')
-def testdb():
-    if db.session.query("1").from_statement("SELECT 1").all():
-        return 'It Works.'
-    else:
-        return 'Something is broken'
-
-@tzundoku.route('/terms')
-def terms():
-    return render_template('legal.html',
-                           title="Terms and Conditions",
-                           content=legal.terms)
-@tzundoku.route('/privacy')
-def privacy():
-    return render_template('legal.html',
-                           title="Privacy Policy",
-                           content=legal.privacy)
-
 @tzundoku.route('/doku', methods=['GET', 'POST'])
 def doku():
     form = AddItemForm()
     dokuid = request.args['id']
     doku = Doku.query.filter_by(id = dokuid).first()
+    showitems = doku.showitems()
     header = doku.title
     items = Item.query.filter(Item.dokus.any(id = dokuid)).all()
     items2 = []
@@ -166,7 +161,7 @@ def doku():
     if request.method == 'POST':
         user = User.query.filter_by(id = current_user.id).first()
         if form.validate() == False:
-            return render_template('doku.html', header=header, items=items, items2=items2, form=form, doku=doku)
+            return render_template('doku.html', header=header, items=items, items2=items2, form=form, doku=doku, showitems=showitems)
         else:
             item_exists = Item.query.filter_by(title = form.title.data).first()
             if item_exists:
@@ -177,7 +172,7 @@ def doku():
                 flash('You have added an item that already exists to this doku')
                 return redirect(url_for('doku', id=dokuid))
             else:
-                item = Item('music', form.title.data, form.artist.data, form.year.data, form.link.data, user.username, datetime.datetime.utcnow())
+                item = Item('music', form.title.data, form.artist.data, form.year.data, form.link.data, form.imglink.data, user.username, datetime.datetime.utcnow())
                 item.dokus.append(doku)
                 db.session.add(doku)
                 db.session.add(item)
@@ -187,7 +182,7 @@ def doku():
                 return redirect(url_for('doku', id=dokuid)) 
 
     elif request.method == 'GET':
-        return render_template('doku.html', header=header, items=items, items2=items2, form=form, doku=doku)
+        return render_template('doku.html', header=header, items=items, items2=items2, form=form, doku=doku, showitems=showitems)
 
 
 @tzundoku.route('/item', methods=['GET', 'POST'])

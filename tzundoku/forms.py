@@ -63,6 +63,7 @@ class AddItemForm(Form):
     artist = TextField('artist', [validators.required()])
     year = TextField('year', [validators.required()])
     link = TextField('link', [validators.required()])
+    imglink = TextField('imglink')
     submit = SubmitField('Add Item')
     
     def __init__(self, *args, **kwargs):

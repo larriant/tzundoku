@@ -102,6 +102,13 @@ class Doku(db.Model):
         doku = Doku.query.filter_by(id = self.id).first()
         db.session.delete(doku)
         db.session.commit()
+
+    def showitems(self):
+        showitems = []
+        for a in self.items:
+            showitems.append(a)
+        showitems.sort(key=lambda x: x.numvotes(self.id), reverse=True)
+        return showitems
     
 class Item(db.Model):
     __tablename__ = 'items'
@@ -114,6 +121,7 @@ class Item(db.Model):
     artist = db.Column(db.String(50))
     year = db.Column(db.Integer)
     link = db.Column(db.String(50))
+    imglink = db.Column(db.String(50))
     timestamp = db.Column(db.DateTime)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
     posts = db.relationship('Post', backref='items')
@@ -123,12 +131,13 @@ class Item(db.Model):
     def __repr__(self):
         return '<Item %r>' % (self.title)
     
-    def __init__(self, type, title, artist, year, link, user_id, timestamp):
+    def __init__(self, type, title, artist, year, link, imglink, user_id, timestamp):
         self.type = type
         self.title= title 
         self.artist = artist
         self.year = year
         self.link = link
+        self.imglink = imglink
         self.user_id= user_id 
         self.timestamp = timestamp 
  
