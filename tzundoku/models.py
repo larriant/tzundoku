@@ -151,6 +151,13 @@ class Item(db.Model):
         downvotes = Itemvote.query.filter_by(item_id=self.id).filter_by(doku_id=doku_id).filter_by(vote = False).count() 
         return upvotes - downvotes
 
+    def showposts(self):
+        showposts= []
+        for a in self.posts:
+            showposts.append(a)
+        showposts.sort(key=lambda x: x.numvotes(), reverse=True)
+        return showposts
+
 
 class Post(db.Model):
     __tablename__ = 'posts'

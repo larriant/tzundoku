@@ -20,7 +20,7 @@
 	</div> 
 
 <div class="postlist">
-{% for a in item.posts %}
+{% for a in showposts %}
     <div class="post">
 	<div class="text">
     <b><a href="/user/{{ a.user_id }}">{{ a.users.username|capitalize }}</a>(<span id="votes{{ a.id }}">{{ a.numvotes() }}</span>): </b></br>{{ a.message }}

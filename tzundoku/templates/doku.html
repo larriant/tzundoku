@@ -5,8 +5,7 @@
 <div class="contentwrapper">
     <h1>{{ header }} Doku</h1>
     <div class="doku_details">
-    <p> 
-    This doku is a parent to:
+    <p>Parents:
     {% for a in doku.children%} 
     {% if a == doku %}
     {{ continue }}
@@ -16,8 +15,7 @@
     {% endfor %}
     </p>  
 
-    <p> 
-    This doku is a child of:
+    <p>Children: 
     {% for a in doku.parents %} 
     {% if a == doku %}
     {{ continue }}
