@@ -99,10 +99,16 @@ def overview():
     form = AddDokuForm()
     titles = []
 
-    alldokus = Doku.query.all()
-    parentlessdokus = []
+    alldokus = Doku.query.all() 
     for a in alldokus: 
-        titles.append(a)
+        if a.parents:
+            continue
+        else:
+            titles.append(a)
+            for b in a.children:
+                titles.append(b)
+                for c in b.children:
+                    titles.append(c)
 
     if request.method == 'POST':
         user = User.query.filter_by(id = current_user.id).first()

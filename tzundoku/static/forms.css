@@ -84,7 +84,7 @@
   border-bottom-left-radius: 0;
 }
 
-.form-register input[name="passwordConfirm"] {
+.form-register input[name="confirm"] {
   margin-bottom: 10px;
   border-top-left-radius: 0;
   border-top-right-radius: 0;

@@ -6,7 +6,7 @@
     <h1>{{ header }} Doku</h1>
     <div class="doku_details">
     <p>Parents:
-    {% for a in doku.children%} 
+    {% for a in doku.parents %} 
     {% if a == doku %}
     {{ continue }}
     {% else %}
@@ -16,7 +16,7 @@
     </p>  
 
     <p>Children: 
-    {% for a in doku.parents %} 
+    {% for a in doku.children %} 
     {% if a == doku %}
     {{ continue }}
     {% else %}
@@ -32,7 +32,7 @@
 {% for a in showitems %} 
     <div class="items">
     {{ count }}
-    <img src="{{ a.imglink }}" alt="{{ a.title }}" height="75px">
+    <a href="./item?id={{ a.id }}"><img src="{{ a.imglink }}" alt="{{ a.title }}" height="75px"></a>
     <a href="./item?id={{ a.id }}">{{ a.title }}</a> 
     {{ a.artist }} {{ a.year }}
     <div class="voting">

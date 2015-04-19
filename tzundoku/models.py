@@ -74,9 +74,9 @@ doku_item = db.Table('doku_item',
     db.Column('item_id', db.Integer, db.ForeignKey('items.id'))
 )
 
-parents = db.Table('parents',
-    db.Column('parent_id', db.Integer, db.ForeignKey('dokus.id')),
-    db.Column('child_id', db.Integer, db.ForeignKey('dokus.id'))
+children = db.Table('children',
+    db.Column('child_id', db.Integer, db.ForeignKey('dokus.id')),
+    db.Column('parent_id', db.Integer, db.ForeignKey('dokus.id'))
     )
     
 class Doku(db.Model):
@@ -86,7 +86,7 @@ class Doku(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
     timestamp =  db.Column(db.DateTime, default=datetime.datetime.utcnow)
     items = db.relationship('Item', secondary=doku_item, backref=db.backref('dokus'))
-    children = db.relationship('Doku', secondary=parents, primaryjoin="Doku.id == parents.c.parent_id", secondaryjoin="Doku.id == parents.c.child_id", backref=db.backref('parents'))
+    parents = db.relationship('Doku', secondary=children, primaryjoin="Doku.id == children.c.child_id", secondaryjoin="Doku.id == children.c.parent_id", backref=db.backref('children'))
     itemvotes = db.relationship('Itemvote', backref='dokus')
     dokuvotes = db.relationship('Dokuvote', backref='dokus')
 
