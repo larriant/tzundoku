@@ -3,6 +3,7 @@ from flask.ext.login import login_user, logout_user, current_user, login_require
 from tzundoku import tzundoku, db, lm
 from .forms import LoginForm, RegistrationForm, AddDokuForm, AddItemForm, AddPostForm
 from .models import User, Doku, Item, Post, Postvote, Itemvote, Dokuvote
+from collections import defaultdict
 
 import datetime
 import legal
@@ -93,22 +94,23 @@ def privacy():
                            content=legal.privacy)
 
 
+def tree(): return defaultdict(tree)
 
 @tzundoku.route("/overview", methods=['GET', 'POST'])
 def overview():
     form = AddDokuForm()
-    titles = []
+    titles = tree()
 
     alldokus = Doku.query.all() 
     for a in alldokus: 
         if a.parents:
             continue
         else:
-            titles.append(a)
+            titles[a]  
             for b in a.children:
-                titles.append(b)
+                titles[a][b]  
                 for c in b.children:
-                    titles.append(c)
+                    titles[a][b][c]
 
     if request.method == 'POST':
         user = User.query.filter_by(id = current_user.id).first()
@@ -178,7 +180,7 @@ def doku():
                 flash('You have added an item that already exists to this doku')
                 return redirect(url_for('doku', id=dokuid))
             else:
-                item = Item('music', form.title.data, form.artist.data, form.year.data, form.link.data, form.imglink.data, user.username, datetime.datetime.utcnow())
+                item = Item(form.itemtype.data, form.title.data, form.artist.data, form.year.data, form.link.data, form.imglink.data, user.username, datetime.datetime.utcnow())
                 item.dokus.append(doku)
                 db.session.add(doku)
                 db.session.add(item)

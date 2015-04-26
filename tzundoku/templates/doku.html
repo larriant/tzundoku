@@ -13,9 +13,8 @@
     <a href="./doku?id={{ a.id }}">{{ a.title }}</a>
     {% endif %}
     {% endfor %}
-    </p>  
-
-    <p>Children: 
+</br>      
+    Children: 
     {% for a in doku.children %} 
     {% if a == doku %}
     {{ continue }}
@@ -119,6 +118,7 @@ $(document).ready(function(){
 {{ form.hidden_tag() }}
 <h2 class ="form-heading">Add an Item</h2>
 
+{{ form.itemtype(class_='form-control', placeholder="Type") }}
 {{ form.title(class_='form-control', placeholder="Title") }}
 {{ form.artist(class_='form-control', placeholder="Artist") }}
 {{ form.year(class_='form-control', placeholder="Year") }}

@@ -59,6 +59,7 @@ class AddDokuForm(Form):
         Form.__init__(self, *args, **kwargs)
 
 class AddItemForm(Form):
+    itemtype = SelectField('itemtype', choices= [('album','Album'), ('film','Film'), ('book', 'Book'), ( 'article', 'Article')])
     title = TextField('title', [validators.required("Please enter a title")])
     artist = TextField('artist', [validators.required()])
     year = TextField('year', [validators.required()])

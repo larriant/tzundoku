@@ -5,13 +5,44 @@
 <div class="contentwrapper">
 <h2 class="form-heading">List of Dokus Already Created</h2>
 
-{% for x in titles %}
-    <p><a href="./doku?id={{ x.id }}">{{ x.title }}</a>
+
+<div id="listContainer">
+  <ul id="expList">
+  {% for key in titles %}
+    <li>
+    <a href="./doku?id={{ key.id }}">{{ key.title }}</a>
     {% if current_user.is_authenticated() and current_user.is_admin() %}
-    <a href="/removedoku/{{ x.id }}">(Delete)</a> 
+        <a href="/removedoku/{{ key.id }}">(Delete)</a> 
     {% endif %}
-    </p>
-{% endfor %}
+    <ul>
+    {% for key2 in titles[key] %}
+        <li>
+        <a href="./doku?id={{ key2.id }}">{{ key2.title }}</a>
+        {% if current_user.is_authenticated() and current_user.is_admin() %}
+            <a href="/removedoku/{{ key2.id }}">(Delete)</a> 
+        {% endif %}
+        {% if titles[key][key2] %}
+        <ul>
+        {% endif %}
+        {% for key3 in titles[key][key2] %}
+            <li>
+            <a href="./doku?id={{ key3.id }}">{{ key3.title }}</a>
+            {% if current_user.is_authenticated() and current_user.is_admin() %}
+                <a href="/removedoku/{{ key3.id }}">(Delete)</a> 
+            {% endif %}
+
+        {% endfor %}
+        {% if titles[key][key2] %}
+        </ul>
+        {% endif %}
+        </li>
+    {% endfor %}
+    </ul>
+    </li>
+  {% endfor %}
+
+  </ul>
+</div>
 
 {% with messages = get_flashed_messages() %}
       {% if messages %}
