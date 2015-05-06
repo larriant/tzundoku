@@ -2,22 +2,37 @@
 {% block title %}{{ header }}{% endblock %}
 {% block content %}
 
-
-
 <div class="contentwrapper">
     <div class="itemdetails">
     	<h1>{{ item.title }}</h1>
 		<img src="{{ item.imglink }}" alt="{{ item.title }}" height="100px">
 		<div class="iteminfo">
-		<p> Appears on:  
+        <p>
+		Appears on:  
     	{% for a in item.dokus %}
    		 <a href="./doku?id={{ a.id }}">{{ a.title }}</a>
-    	{% endfor %}
-		</p>
-		<a href="{{ item.link }}">Wikipedia</a></br>
-		<a href="">Buy</a>
+    	{% endfor %}	
+        </p>
+		<a href="{{ item.link }}">Wikipedia</a>
+		<a href="">Buy</a></br>
+        <button type="button" id="itemedit">Edit Item</button>    
 		</div>
 	</div> 
+
+<form class="form-item-add" id="form-item-edit" role="form" method="post" action="./edititem?id={{ item.id }}" autocomplete="off">
+{{ edititemform.csrf }}
+{{ edititemform.imglink(class_='form-control', placeholder="Image Link", style="display:none") }}
+{{ edititemform.link(class_='form-control', placeholder="Link", style="display:none") }}
+{{ edititemform.submit(class_='btn btn-lg btn-primary btn-block', style="display:none") }}
+</form>
+
+<script>
+$('#itemedit').click(function() {
+    $('#form-item-edit #imglink').toggle();
+    $('#form-item-edit #link').toggle();
+    $('#form-item-edit #submit').toggle();
+});
+</script>
 
 <div class="postlist">
 {% for a in showposts %}
@@ -27,6 +42,7 @@
     </div>
     <div class="votes">
     {% if current_user.is_authenticated() and current_user.is_admin() or current_user.id == a.user_id %}
+    <a id="postedit{{ a.id }}">(Edit)</a>
     <a href="/removepost/{{ a.id }}">(Delete)</a>  
     {% endif %}
     {% if current_user.is_authenticated() %} 
@@ -34,8 +50,22 @@
     <button type="button" id="downvotebutton{{ a.id }}" data-button='{"vote": false, "post_id": {{ a.id }}}'>(Downvote)</button>
     {% endif %}
 	</div>
-    </div>
-    <script>
+<form class="form-item-add" id="editpostform{{ a.id }}" role="form" method="post" action="./editpost/{{ item.id }}/{{ a.id }}" autocomplete="off">
+{{ editpostform.csrf }}
+{{ editpostform.message(class_='form-control', placeholder="Message", value= '{{ a.message }}' , style="display:none") }}
+{{ editpostform.submit(class_=' btn btn-lg btn-primary btn-block', style="display:none") }}
+</form>
+<script>
+$('#postedit{{ a.id }}').on('click', function() {
+    $('#editpostform{{ a.id }} #message').toggle();
+    $('#editpostform{{ a.id }} #submit').toggle();
+
+});
+</script>
+</div>
+
+
+<script>
 $(document).ready(function(){
     $("#upvotebutton{{ a.id }}").click(function(){
     var data = $.parseJSON($(this).attr('data-button')); 
@@ -112,14 +142,14 @@ $(document).ready(function(){
 
 {% if current_user.is_authenticated() %}
 
-<form class="form-post-add" role="form" method="post" action="" autocomplete="off">
-{{ form.hidden_tag() }}
+<form class="form-post-add" role="form" method="post" action="./addpost?id={{ item.id}}" autocomplete="off">
 <h2 class ="form-heading">Add Post</h2>
+{{ addpostform.csrf_token }}
 
-{{ form.message(class_='form-control', placeholder="Message") }}
-{{ form.submit(class_='btn btn-lg btn-primary btn-block') }}
+{{ addpostform.message(class_='form-control', placeholder="Message") }}
+{{ addpostform.submit(class_='btn btn-lg btn-primary btn-block') }}
  
-{% for post in form.message.errors %}
+{% for post in addpostform.message.errors %}
     <div class="flash">{{ post }}</div>
 {% endfor %}
 

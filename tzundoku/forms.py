@@ -51,7 +51,7 @@ class RegistrationForm(Form):
 
 class AddDokuForm(Form):
     title = TextField('title', [validators.required("Please enter a title")])
-    parent = TextField('parent') 
+    parent = SelectField('parent')
     submit = SubmitField('Add Doku')
 
 
@@ -59,16 +59,26 @@ class AddDokuForm(Form):
         Form.__init__(self, *args, **kwargs)
 
 class AddItemForm(Form):
-    itemtype = SelectField('itemtype', choices= [('album','Album'), ('film','Film'), ('book', 'Book'), ( 'article', 'Article')])
+    itemtype = SelectField('itemtype', choices= [('', 'What type of item?'),('album','Album'), ('film','Film'), ('book', 'Book'), ( 'article', 'Article')])
     title = TextField('title', [validators.required("Please enter a title")])
-    artist = TextField('artist', [validators.required()])
-    year = TextField('year', [validators.required()])
-    link = TextField('link', [validators.required()])
+    artist = TextField('artist')
+    year = TextField('year', [validators.required("Please enter a year!")])
+    link = TextField('link')
     imglink = TextField('imglink')
     submit = SubmitField('Add Item')
     
     def __init__(self, *args, **kwargs):
         Form.__init__(self, *args, **kwargs)
+
+    def validate(self):
+        if not Form.validate(self):
+            return False
+        
+        if self.itemtype.data == 'album':
+            if self.artist.data == '':
+                return False
+            else:
+                return True
 
 class AddPostForm(Form):
     message = TextAreaField('message', [validators.required()])
@@ -78,4 +88,17 @@ class AddPostForm(Form):
     def __init__(self, *args, **kwargs):
         Form.__init__(self, *args, **kwargs)
 
+class EditPostForm(Form):
+    message = TextAreaField('message', [validators.required()])
+    submit = SubmitField('Edit Post')
+    
+    def __init__(self, *args, **kwargs):
+        Form.__init__(self, *args, **kwargs)
 
+class EditItemForm(Form):
+    link = TextField('link', [validators.required()])
+    imglink = TextField('imglink',[validators.required()])
+    submit = SubmitField('Edit Item')
+    
+    def __init__(self, *args, **kwargs):
+        Form.__init__(self, *args, **kwargs)

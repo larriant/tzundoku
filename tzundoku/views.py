@@ -1,7 +1,7 @@
 from flask import render_template, request, redirect, url_for, flash, session, json, jsonify
 from flask.ext.login import login_user, logout_user, current_user, login_required
 from tzundoku import tzundoku, db, lm
-from .forms import LoginForm, RegistrationForm, AddDokuForm, AddItemForm, AddPostForm
+from .forms import LoginForm, RegistrationForm, AddDokuForm, AddItemForm, AddPostForm, EditItemForm, EditPostForm
 from .models import User, Doku, Item, Post, Postvote, Itemvote, Dokuvote
 from collections import defaultdict
 
@@ -111,7 +111,21 @@ def overview():
                 titles[a][b]  
                 for c in b.children:
                     titles[a][b][c]
+ 
+    formtitles = []
+    formtitles.append(('', 'No Parents'))
+    for a in alldokus: 
+        if a.parents:
+            continue
+        else:
+            formtitles.append((a.title , a.title))
+            for b in a.children:
+                formtitles.append((b.title, b.title))
+                for c in b.children:
+                    formtitles.append((c.title, c.title))
 
+    form.parent.choices = formtitles
+    
     if request.method == 'POST':
         user = User.query.filter_by(id = current_user.id).first()
         if form.validate() == False:
@@ -192,27 +206,66 @@ def doku():
     elif request.method == 'GET':
         return render_template('doku.html', header=header, items=items, items2=items2, form=form, doku=doku, showitems=showitems)
 
-
-@tzundoku.route('/item', methods=['GET', 'POST'])
-def item(): 
-    form = AddPostForm()
+@tzundoku.route('/item', methods=['GET'])
+def item():  
     itemid = request.args['id']
-    item = Item.query.filter_by(id = itemid).first()
-    showposts= item.showposts()
-    if request.method == 'POST':
-        user = User.query.filter_by(id = current_user.id).first() 
-        if form.validate() == False:
-            return render_template('item.html', item=item, showitems=showitems, form=form)
-        else:
-            post = Post(user.id, form.message.data, datetime.datetime.utcnow(), itemid)
-            db.session.add(post)
-            db.session.commit()
-            flash('You have added a post!')
-            return redirect(url_for('item', id=itemid)) 
+    item = Item.query.filter_by(id = itemid).first()  
+    edititemform = EditItemForm()
+    edititemform.link.data = item.link
+    edititemform.imglink.data = item.imglink  
+    showposts= item.showposts()  
 
-    elif request.method == 'GET':
-        return render_template('item.html', item=item, showposts=showposts, form=form)
+    return render_template('item.html', item=item, showposts=showposts, addpostform=AddPostForm(), edititemform=edititemform, editpostform = EditPostForm())
+
+@tzundoku.route('/addpost', methods=['GET','POST'])
+def addpost():
+    itemid = request.args['id']
+    addpostform = AddPostForm()
+    if request.method == 'POST' and addpostform.validate():
+        user = User.query.filter_by(id = current_user.id).first() 
+        post = Post(user.id, addpostform.message.data, datetime.datetime.utcnow(), itemid)
+        db.session.add(post)
+        db.session.commit()
+        flash('You have added a post!')
+        return redirect(url_for('item', id=itemid)) 
+
+    else:
+        flash('Please enter a post')
+        return redirect(url_for('item', id=itemid))
+
+@tzundoku.route('/editpost/<itemid>/<postid>', methods=['GET', 'POST'])
+def editpost(itemid, postid):
+    post = Post.query.filter_by(id=postid).first()
+    editpostform = EditPostForm() 
     
+    if request.method == 'POST':
+        post = Post.query.filter_by(id=postid).first()
+        post.message = editpostform.message.data
+        db.session.commit()
+        flash('You have edited the post')
+        return redirect(url_for('item', id=itemid))
+    
+    else:
+        flash('Please edit your post')
+        return redirect(url_for('item', id=itemid))
+
+   
+@tzundoku.route('/edititem', methods=['GET','POST'])
+def edititem():
+    itemid = request.args['id'] 
+    edititemform = EditItemForm()
+
+    if request.method == 'POST': 
+        item = Item.query.filter_by(id = itemid).first()
+        item.link = edititemform.link.data
+        item.imglink = edititemform.imglink.data
+        db.session.commit()
+        flash('You have clicked the button')
+        return redirect(url_for('item', id=itemid)) 
+    else: 
+        flash('Please enter new item details')
+        return redirect(url_for('item', id=itemid))
+        
 @tzundoku.route('/makemoderator/<id>')
 def makemoderator(id):
     user = User.query.filter_by(id=id).first()

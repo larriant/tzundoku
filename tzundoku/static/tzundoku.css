@@ -188,6 +188,7 @@ clear:both;
   position: relative;
   display:block;
   margin-bottom:20px;
+  padding-left:5px;
 
 }
 
@@ -273,3 +274,7 @@ display:block;
   margin-left:200px;
 }
 
+.itemedit{
+  width:100px;
+  margin:20px auto;
+}
