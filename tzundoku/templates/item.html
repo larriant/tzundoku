@@ -52,11 +52,12 @@ $('#itemedit').click(function() {
 	</div>
 <form class="form-item-add" id="editpostform{{ a.id }}" role="form" method="post" action="./editpost/{{ item.id }}/{{ a.id }}" autocomplete="off">
 {{ editpostform.csrf }}
-{{ editpostform.message(class_='form-control', placeholder="Message", value= '{{ a.message }}' , style="display:none") }}
+{{ editpostform.message(class_='form-control', placeholder="Message", style="display:none") }}
 {{ editpostform.submit(class_=' btn btn-lg btn-primary btn-block', style="display:none") }}
 </form>
 <script>
 $('#postedit{{ a.id }}').on('click', function() {
+    $('#editpostform{{ a.id }} #message').val("{{ a.message }}");
     $('#editpostform{{ a.id }} #message').toggle();
     $('#editpostform{{ a.id }} #submit').toggle();
 
