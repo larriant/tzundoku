@@ -13,3 +13,4 @@ include
 
 /db_repository
 app.db
+pip-selfcheck.json
