@@ -7,6 +7,7 @@ from collections import defaultdict
 
 import datetime
 import legal
+import logger
 
 @lm.user_loader
 def load_user(id):

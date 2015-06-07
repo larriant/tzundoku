@@ -8,7 +8,6 @@ from flask.ext.login import LoginManager
 from flask.ext.restful import Api
 
 tzundoku = Flask(__name__)
-
 tzundoku.config.from_object('config')
 
 db = SQLAlchemy(tzundoku)
@@ -23,7 +22,5 @@ jinja_env = Environment(extensions=['jinja2.ext.loopcontrols'])
 from tzundoku import views, models, api
 
 lm.login_view = 'login'
-
-
 
 
