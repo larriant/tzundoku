@@ -61,9 +61,9 @@ def logout():
 @tzundoku.route('/profile')
 @login_required
 def profile():
-    user = User.query.filter_by(email= session['email']).first()  
-    username = user.username
-    return render_template('profile.html', username=username)
+    username = current_user.username
+    email = current_user.email
+    return render_template('profile.html', username=username, email=email)
 
 @tzundoku.route('/user/<id>')
 def user(id):
@@ -399,4 +399,3 @@ def downvoteitem():
             db.session.commit()
         votes = item.numvotes(request.json['doku_id'])
         return jsonify({'numvotes': votes, 'item_id': item.id})
-

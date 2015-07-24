@@ -10,7 +10,6 @@ user_fields={
     'email' : fields.String
 }
 
-
 class UserList(Resource):
     @marshal_with(user_fields)
     def get(self):
